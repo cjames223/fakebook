@@ -4,6 +4,7 @@ import 'primereact/resources/primereact.css';
 import 'primeflex/primeflex.css';
 import '../App.css';
 import Reg_Log_Navbar from '../components/reg-log-navbar'
+import { Link } from 'react-router-dom'
 
 import React, { useState } from 'react';
 import { Form, Field } from 'react-final-form';
@@ -136,6 +137,8 @@ function Login () {
                                         <label htmlFor="accept" className={classNames({ 'p-error': isFormFieldValid(meta) })}>I agree to the terms and conditions*</label>
                                     </div>
                                 )} />
+
+                                <h6 className='register-link'>Have an account? <Link to='/'>Login here.</Link></h6>
 
                                 <Button type="submit" label="Submit" className="mt-2" />
                             </form>

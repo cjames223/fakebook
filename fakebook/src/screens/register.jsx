@@ -17,7 +17,7 @@ import { Dialog } from 'primereact/dialog';
 import { Divider } from 'primereact/divider';
 import { classNames } from 'primereact/utils';
 
-function Login () {
+function Register () {
     const [showMessage, setShowMessage] = useState(false);
     const [formData, setFormData] = useState({});
 
@@ -74,12 +74,8 @@ function Login () {
     );
 
     return (
-        <div>
-            <div>
-                <Reg_Log_Navbar />
-            </div>
-
-            <div className="login-form">
+        <div className='register-modal-container'>
+            <div className="register-modal">
                 <Dialog visible={showMessage} onHide={() => setShowMessage(false)} position="top" footer={dialogFooter} showHeader={false} breakpoints={{ '960px': '80vw' }} style={{ width: '30vw' }}>
                     <div className="flex align-items-center flex-column pt-6 px-3">
                         <i className="pi pi-check-circle" style={{ fontSize: '5rem', color: 'var(--green-500)' }}></i>
@@ -138,9 +134,7 @@ function Login () {
                                     </div>
                                 )} />
 
-                                <h6 className='register-link'>Have an account? <Link to='/'>Login here.</Link></h6>
-
-                                <Button type="submit" label="Submit" className="mt-2" />
+                                <Button type="submit" label="Create Account" className="mt-2" />
                             </form>
                         )} />
                     </div>
@@ -150,4 +144,4 @@ function Login () {
     );
 }
 
-export default Login
+export default Register

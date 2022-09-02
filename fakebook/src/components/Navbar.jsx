@@ -14,7 +14,7 @@ function Navbar () {
         <div>
             <div className='navbar'>
                 <div>
-                    <img alt="logo" src={logo} height="40" className="mr-2"></img>
+                    <img alt="logo" src={logo} height="60" className="mr-2"></img>
                 </div>
                 <div className='navbar-search'>
                     <span className="p-input-icon-left">

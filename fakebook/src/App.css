@@ -92,24 +92,17 @@ body {
   margin-left: -40px;
   top: 0;
   align-content: center;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: center;
-  gap: 50px;
   background-color: #FFFFFF;
   padding: 20px 0 20px 0;
 }
 
-.test {
-  flex: auto;
-}
-
-.menu-bar {
-  
-}
-
 .navbar-search {
-  width: 500px;
+  width: 532px;
 }
+
+
 
 /* FOR REGISTER/LOGIN LINKS */
 

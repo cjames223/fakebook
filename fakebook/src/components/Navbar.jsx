@@ -6,7 +6,6 @@ import '../App.css';
 import logo from '../img/fakebook_logo.png'
 import img from '../img/profile_img.jpg'
 
-import { Menubar } from 'primereact/menubar'
 import { InputText } from 'primereact/inputtext'
 import { Avatar } from 'primereact/avatar'
 

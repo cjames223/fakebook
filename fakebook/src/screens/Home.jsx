@@ -5,10 +5,16 @@ import 'primeflex/primeflex.css';
 import '../App.css';
 
 import Navbar from '../components/Navbar'
+import CreatePost from '../components/CreatePost'
 
 function Home () {
     return (
-        <Navbar />
+        <div>
+            <div>
+                <Navbar />
+                <CreatePost />
+            </div>
+        </div>
     )
 }
 

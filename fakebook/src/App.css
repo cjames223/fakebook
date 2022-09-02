@@ -102,12 +102,35 @@ body {
   width: 532px;
 }
 
-
-
 /* FOR REGISTER/LOGIN LINKS */
 
 .register-link {
   text-align: center;
+}
+
+/* FOR HOME */
+
+.create-post-container {
+  display: flex;
+  margin: 0 auto;
+  align-content: center;
+  justify-content: center;
+  align-items: center;
+}
+
+.create-post-card {
+  margin-top: 50px;
+  width: 632px;
+}
+
+.create-post {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.write-post-input {
+  width: 532px;
 }
 
 /* MEDIA QUERIES */

@@ -3,8 +3,7 @@ import 'primereact/resources/themes/lara-light-indigo/theme.css';
 import 'primereact/resources/primereact.css';
 import 'primeflex/primeflex.css';
 import '../App.css';
-import Reg_Log_Navbar from '../components/reg-log-navbar'
-import Register from '../screens/register'
+import Register from '../screens/Register'
 
 import React, { useState } from 'react';
 import { Form, Field } from 'react-final-form';

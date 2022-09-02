@@ -1,7 +1,9 @@
 import './App.css';
-import Login from './screens/login'
-import Register from './screens/register'
 import { Routes, Route } from 'react-router-dom'
+import Login from './screens/Login'
+import Register from './screens/Register'
+import Home from './screens/Home'
+
 
 function App() {
   return (
@@ -9,6 +11,7 @@ function App() {
       <Routes>
         <Route path ='/' element={<Login />} />
         <Route path ='/register' element={<Register />} />
+        <Route path='/home' element={<Home />} />
       </Routes>
     </div>
   )

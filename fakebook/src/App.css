@@ -1,5 +1,6 @@
 body {
   background-color: #F0F2F5;
+  margin: 0 40px 0 40px;
 }
 
 /* FOR LOGIN */
@@ -83,18 +84,31 @@ body {
   float: right;
 }
 
-/* FOR REG-LOG-NAVBAR */
+/* FOR NAVBAR */
 
-.reg-log-navbar {
-  position: fixed;
+.navbar {
+  display: flex;
+  margin-right: -40px;
+  margin-left: -40px;
   top: 0;
-  width: 100%;
-  background: black;
-  color: white; 
+  align-content: center;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 50px;
+  background-color: #FFFFFF;
+  padding: 20px 0 20px 0;
 }
 
-.reg-log-navbar-title {
-  text-align: center;
+.test {
+  flex: auto;
+}
+
+.menu-bar {
+  
+}
+
+.navbar-search {
+  width: 500px;
 }
 
 /* FOR REGISTER/LOGIN LINKS */

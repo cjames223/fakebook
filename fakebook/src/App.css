@@ -33,36 +33,17 @@ body {
   margin: 30px;
 }
 
-@media screen and (max-width: 960px) {
-  .login-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .login-form {
-    margin: 0 auto;
-    margin-top: 100px;
-  }
+.create-account-button {
+  position: static !important;
 }
 
-@media screen and (max-width: 640px) {
-  .login-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
+.login-text-title {
+  color: blue;
+  font-size: 60px;
+}
 
-  .login-form .card {
-      width: 100%;
-      min-width: 0;
-  }
-
-  .reg-log-container {
-    background-image: none;
-  }
+.login-text-subtext {
+  font-size: 30px;
 }
 
 /* FOR REGISTER */
@@ -98,6 +79,10 @@ body {
   font-size: 40px;
 }
 
+.close {
+  float: right;
+}
+
 /* FOR REG-LOG-NAVBAR */
 
 .reg-log-navbar {
@@ -116,4 +101,58 @@ body {
 
 .register-link {
   text-align: center;
+}
+
+/* MEDIA QUERIES */
+
+@media screen and (max-width: 640px) {
+  .login-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 50%;
+  }
+
+  .login-form {
+    margin: 10px 0 10px 200px;
+  }
+
+  .login-form .login-card {
+    min-width: 300px;
+  }
+
+  .register-modal-container {
+    width: 100%;
+  }
+
+  .login-text {
+    margin-left: 200px;
+    text-align: center;
+  }
+}
+
+@media screen and (min-width: 641px) and (max-width: 960px) {
+  .login-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+
+  .login-form {
+    margin: 0 auto;
+    margin-top: 10px;
+    margin-bottom: 20px;
+  }
+
+  .register-modal-container {
+    position: absolute;
+    padding-bottom: 700px;
+  }
+
+  .register-modal {
+    margin-top: 50px;
+  }
 }

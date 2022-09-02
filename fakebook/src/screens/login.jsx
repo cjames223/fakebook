@@ -48,58 +48,54 @@ function Login () {
         return isFormFieldValid(meta) && <small className="p-error">{meta.error}</small>;
     };
 
-    const dialogFooter = <div className="flex justify-content-center"><Button label="OK" className="p-button-text" autoFocus onClick={() => setShowMessage(false) } /></div>;
-
-    
+    const dialogFooter = <div className="flex justify-content-center"><Button label="OK" className="p-button-text" autoFocus onClick={() => setShowMessage(false) } /></div>;  
 
     return (
-        <div className='login-container'>
-            <div>
-                <h1>fakebook</h1>
-                <h2>Connect with friends and the world around you with Fakebook.</h2>
-            </div>
-
-            <div className="login-form">
-                <div className="flex justify-content-center">
-                    <div className="login-card">
-                        <Form onSubmit={onSubmit} initialValues={{ email: '', password: '' }} validate={validate} render={({ handleSubmit }) => (
-                            <form onSubmit={handleSubmit} className="p-fluid">
-                                <Field name="email" render={({ input, meta }) => (
-                                    <div className="field">
-                                        <span className="p-float-label p-input-icon-right">
-                                            <i className="pi pi-envelope" />
-                                            <InputText id="email" {...input} className={classNames({ 'p-invalid': isFormFieldValid(meta) })} />
-                                            <label htmlFor="email" className={classNames({ 'p-error': isFormFieldValid(meta) })}>Email*</label>
-                                        </span>
-                                        {getFormErrorMessage(meta)}
-                                    </div>
-                                )} />
-                                <Field name="password" render={({ input, meta }) => (
-                                    <div className="field">
-                                        <span className="p-float-label">
-                                            <Password id="password" {...input} toggleMask className={classNames({ 'p-invalid': isFormFieldValid(meta) })} feedback={false} />
-                                            <label htmlFor="password" className={classNames({ 'p-error': isFormFieldValid(meta) })}>Password*</label>
-                                        </span>
-                                        {getFormErrorMessage(meta)}
-                                    </div>
-                                )} />
-
-                                <Button type="submit" label="Log In" />
-                                <hr className='login-break' />
-
-                            </form>
-                        )} />
-                    </div>
+        
+            <div className='login-container'>
+                <div className='login-text'>
+                    <h1 className='login-text-title'>fakebook</h1>
+                    <h2 className='login-text-subtext'>Connect with friends and the world around you with Fakebook.</h2>
                 </div>
 
-            <Register />
-           
-           <div className='create-account'>
-               <Button type="submit" label="Create An Account" className="p-button-success create-account-button" onClick={<Register opacity={1}/>}/>
-           </div>
+                <div className="login-form">
+                    <div >
+                        <div className="login-card">
+                            <Form onSubmit={onSubmit} initialValues={{ email: '', password: '' }} validate={validate} render={({ handleSubmit }) => (
+                                <form onSubmit={handleSubmit} className="p-fluid">
+                                    <Field name="email" render={({ input, meta }) => (
+                                        <div className="field">
+                                            <span className="p-float-label p-input-icon-right">
+                                                <i className="pi pi-envelope" />
+                                                <InputText id="email" {...input} className={classNames({ 'p-invalid': isFormFieldValid(meta) })} />
+                                                <label htmlFor="email" className={classNames({ 'p-error': isFormFieldValid(meta) })}>Email*</label>
+                                            </span>
+                                            {getFormErrorMessage(meta)}
+                                        </div>
+                                    )} />
+                                    <Field name="password" render={({ input, meta }) => (
+                                        <div className="field">
+                                            <span className="p-float-label">
+                                                <Password id="password" {...input} toggleMask className={classNames({ 'p-invalid': isFormFieldValid(meta) })} feedback={false} />
+                                                <label htmlFor="password" className={classNames({ 'p-error': isFormFieldValid(meta) })}>Password*</label>
+                                            </span>
+                                            {getFormErrorMessage(meta)}
+                                        </div>
+                                    )} />
 
-           </div>
-        </div>
+                                    <Button type="submit" label="Log In" />
+                                    <hr className='login-break' />
+
+                                </form>
+                            )} />
+                        </div>
+                    </div>
+
+                <Register />
+
+            </div>
+            </div>
+        
     );
 }
 

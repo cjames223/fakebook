@@ -139,21 +139,14 @@ body {
 
 }
 
-.add-to-post {
+.add-to-post-container {
   display: flex;
-  border: solid #CED0D4 2px;
-  border-radius: 10px;
+  gap: 10px;
   width: 450px;
 }
 
-.add-to-post-buttons {
-  display: flex;
-  margin-left: 150px;
-}
-
-.add-to-post-text {
-  margin-left: 15px;
-  font-size: 15px;
+.post-button {
+  width: 390px;
 }
 
 .post-text-area {
@@ -168,6 +161,14 @@ body {
 .create-post-close-button {
   display: flex;
   align-items: center;
+}
+
+.photo-upload {
+  width: 450px;
+}
+
+.photo-upload-container {
+  display: none;
 }
 
 /* FOR REGISTER/LOGIN LINKS */

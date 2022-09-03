@@ -6,6 +6,8 @@ import '../App.css';
 
 import Navbar from '../components/Navbar'
 import CreatePost from '../components/CreatePost'
+import Post from '../components/Post'
+import PostForm from '../components/PostForm'
 
 function Home () {
     return (
@@ -13,6 +15,8 @@ function Home () {
             <div>
                 <Navbar />
                 <CreatePost />
+                <PostForm />
+                <Post />
             </div>
         </div>
     )

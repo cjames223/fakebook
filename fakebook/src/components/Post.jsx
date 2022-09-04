@@ -11,23 +11,24 @@ import { Button } from 'primereact/button'
 import { InputText } from 'primereact/inputtext'
 
 function Post ({ post }) {
+
     return (
         <div className='post-container'>
             <Card className='post-template'>
-                <div className='post-container'>
+                <div className='post-inner-container'>
                     <div className='post-avatar-container'>
                         <div>
                             <Avatar image={img} shape='circle' size='xlarge' />
                         </div>
                         <div>
-                            <span className='profile-name'>Carlton James Jr.</span>
-                            <h4 className='time'></h4>
+                            <span className='profile-name'>{post.creator}</span>
+                            <h4 className='time'>{`${post.date} at ${post.time}`}</h4>
                         </div>
                     </div>
-                    <h2 className='post-body'>I am the greatest of all time. No one is greater than me.</h2>
-                    <img className='post-image' src={img} />
+                    <h2 className='post-body'>{post.body}</h2>
+                    <img alt='post' className='post-image' src={post.selectedFile} />
                     <div className='like-comment-container'>
-                        <i className='pi pi-thumbs-up like-icon' />
+                        <i className='pi pi-thumbs-up like-icon'><span className='like-count'>{post.likeCount}</span></i>
                         <h3>Comments</h3>
                     </div>
                     <div>

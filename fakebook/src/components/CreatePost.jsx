@@ -5,7 +5,7 @@ import 'primeflex/primeflex.css';
 import '../App.css';
 import img from '../img/profile_img.jpg'
 
-import React, { useRef, useState, useEffect } from 'react'
+import React, { useRef, useState } from 'react'
 import { InputTextarea } from 'primereact/inputtextarea'
 import { Button } from 'primereact/button'
 import { Avatar } from 'primereact/avatar'
@@ -36,7 +36,7 @@ function CreatePost () {
     }
 
     const handleSubmit = async () => {
-        if (regRefText.current.value != '' || postData.selectedFile.length != 0) {
+        if (regRefText.current.value !== '' || postData.selectedFile.length !== 0) {
             regRef.current.style.opacity = 0;
             regRef.current.style.pointerEvents = 'none';
             regRefImg.current.style.display = 'none'

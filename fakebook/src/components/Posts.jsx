@@ -6,18 +6,17 @@ import '../App.css';
 
 import Post from './Post'
 import { useSelector } from 'react-redux'
-import { Card } from 'primereact/card'
 
 function Posts () {
     const posts = useSelector((state) => state.posts)
 
+    console.log(posts)
+
     return (
         <div className='post-container'>
-            <Card className='post-template'>
                 {posts.map((post) => (
                     <Post post={post} />
                 ))}
-            </Card>
         </div>
     )
     

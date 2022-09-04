@@ -1,6 +1,6 @@
 body {
   background-color: #F0F2F5;
-  margin: 0 40px 0 40px;
+  margin: 0 40px 20px 40px;
 }
 
 /* FOR LOGIN */
@@ -243,6 +243,16 @@ body {
   margin-top: 20px;
 }
 
+.post-inner-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  align-content: center;
+  margin: 0 auto;
+  margin-top: -15px;
+}
+
 .post-template {
   display: Flex;
   flex-direction: column;
@@ -256,6 +266,7 @@ body {
 
 .post-body {
   text-align: left;
+  width: 600px;
 }
 
 .post-avatar-container {
@@ -296,7 +307,7 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-top: 15px;
+  margin-bottom: -30px;
 }
 
 .comment-input {
@@ -307,6 +318,7 @@ body {
 .comment-container {
   display: flex;
   gap: 10px;
+  margin: 15px 0 15px 0;
 }
 
 .comment {
@@ -324,6 +336,11 @@ body {
 
 .comment-text {
   margin: 0 0 0 10px;
+}
+
+.like-count {
+  color: black;
+  margin-left: 2px;
 }
 
 /* MEDIA QUERIES */

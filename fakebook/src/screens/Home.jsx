@@ -14,7 +14,7 @@ function Home () {
             <div>
                 <Navbar />
                 <CreatePost />
-                <Posts />
+                <Posts />  
             </div>
         </div>
     )

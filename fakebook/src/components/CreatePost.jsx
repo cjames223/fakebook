@@ -158,50 +158,49 @@ function CreatePost () {
             </div>
             
             <div ref={regRef} className='create-post-modal-container'>
-            <div className='create-post-modal'>
-                <div className='create-post-close-button'>
-                    <div className='create-post-text-container'>
-                        <h2 className='create-post-text'>Create Post</h2>
+                <div className='create-post-modal'>
+                    <div className='create-post-close-button'>
+                        <div className='create-post-text-container'>
+                            <h2 className='create-post-text'>Create Post</h2>
+                        </div>
+                        <div className='close-button-container'>
+                            <Button icon='pi pi-times' className='close p-button-rounded p-button-danger' aria-label='Cancel' onClick={closeCreatePost}/>   
+                        </div>
                     </div>
-                    <div className='close-button-container'>
-                        <Button icon='pi pi-times' className='close p-button-rounded p-button-danger' aria-label='Cancel' onClick={closeCreatePost}/>   
+                    <hr className='create-post-break' />
+                    <div className='create-avatar-container'>
+                        <div>
+                            <Avatar image={img} shape='circle' size='xlarge' />
+                        </div>
+                        <div>
+                            <span ref={regRefCreator} value={postData.creator} className='profile-name'>Carlton James Jr.</span>
+                        </div>
                     </div>
-                </div>
-                <hr className='create-post-break' />
-                <div className='create-avatar-container'>
                     <div>
-                        <Avatar image={img} shape='circle' size='xlarge' />
+                        <InputTextarea ref={regRefText} className='post-text-area' rows={5} cols={30} placeholder="What's on your mind?" onChange={(e) => setPostData({ ...postData, body: e.target.value})}/>
                     </div>
-                    <div>
-                        <span ref={regRefCreator} value={postData.creator} className='profile-name'>Carlton James Jr.</span>
-                    </div>
-                </div>
-                <div>
-                    <InputTextarea ref={regRefText} className='post-text-area' rows={5} cols={30} placeholder="What's on your mind?" onChange={(e) => setPostData({ ...postData, body: e.target.value})}/>
-                </div>
-                <div ref={regRefImg}className='photo-upload-container'>
-                    <Tooltip target=".custom-choose-btn" content="Choose" position="bottom" />
-                    <Tooltip target=".custom-upload-btn" content="Upload" position="bottom" />
-                    <Tooltip target=".custom-cancel-btn" content="Clear" position="bottom" />
+                    <div ref={regRefImg}className='photo-upload-container'>
+                        <Tooltip target=".custom-choose-btn" content="Choose" position="bottom" />
+                        <Tooltip target=".custom-upload-btn" content="Upload" position="bottom" />
+                        <Tooltip target=".custom-cancel-btn" content="Clear" position="bottom" />
 
-                    <div className="photo-upload">
-                        <FileUpload ref={fileUploadRef} customUpload={true} uploadHandler={uploadImg} multiple accept="image/*" maxFileSize={10000000}
-                            onUpload={onTemplateUpload} onSelect={onTemplateSelect} onError={onTemplateClear} onClear={onTemplateClear}
-                            headerTemplate={headerTemplate} itemTemplate={itemTemplate} emptyTemplate={emptyTemplate}
-                            chooseOptions={chooseOptions} cancelOptions={cancelOptions} auto />
+                        <div className="photo-upload">
+                            <FileUpload ref={fileUploadRef} customUpload={true} uploadHandler={uploadImg} multiple accept="image/*" maxFileSize={10000000}
+                                onUpload={onTemplateUpload} onSelect={onTemplateSelect} onError={onTemplateClear} onClear={onTemplateClear}
+                                headerTemplate={headerTemplate} itemTemplate={itemTemplate} emptyTemplate={emptyTemplate}
+                                chooseOptions={chooseOptions} cancelOptions={cancelOptions} auto />
+                        </div>
                     </div>
-                </div>
-                <div className='add-to-post-container'>
-                    <div>
-                        <Button label='Post' className='p-button-raised post-button' onClick={handleSubmit}/>
-                    </div>
-                    <div>
-                        <Button icon='pi pi-images' className='p-button-success  img-button' onClick={uploadPhoto}/>
+                    <div className='add-to-post-container'>
+                        <div>
+                            <Button label='Post' className='p-button-raised post-button' onClick={handleSubmit}/>
+                        </div>
+                        <div>
+                            <Button icon='pi pi-images' className='p-button-success  img-button' onClick={uploadPhoto}/>
+                        </div>
                     </div>
                 </div>
             </div>
-
-        </div>
         </div>
     )
 }

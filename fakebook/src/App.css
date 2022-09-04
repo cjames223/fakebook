@@ -343,6 +343,10 @@ body {
   margin-left: 2px;
 }
 
+.post-options-button-wrapper {
+  margin-left: 270px;
+}
+
 /* MEDIA QUERIES */
 
 @media screen and (max-width: 640px) {

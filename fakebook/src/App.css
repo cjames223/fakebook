@@ -155,12 +155,14 @@ body {
 
 .create-post-break {
   margin-top: -20px;
-  width: 400px;
+  width: 500px;
 }
 
 .create-post-close-button {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  width: 450px;
 }
 
 .photo-upload {
@@ -169,6 +171,19 @@ body {
 
 .photo-upload-container {
   display: none;
+}
+
+.create-avatar-container {
+  display: flex;
+  gap: 10px;
+  align-content: flex-start;
+  justify-content: flex-start;
+  width: 450px;
+}
+
+.profile-name {
+  font-weight: bold;
+  font-size: 20px;
 }
 
 /* FOR REGISTER/LOGIN LINKS */
@@ -208,6 +223,10 @@ body {
   cursor: pointer;
 }
 
+.write-post-button:hover {
+  background-color: lightgray;
+}
+
 .write-post-text {
   margin-left: 10px;
   font-size: 15px;
@@ -228,6 +247,83 @@ body {
   display: Flex;
   flex-direction: column;
   width: 632px;
+}
+
+.post-image {
+  width: 600px;
+  border-radius: 10px;
+}
+
+.post-body {
+  text-align: left;
+}
+
+.post-avatar-container {
+  display: flex;
+  gap: 10px;
+  width: 600px;
+}
+
+.time {
+  margin-top: 0;
+}
+
+.like-comment-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 600px;
+  margin-top: 10px;
+}
+
+.post-break {
+  width: 632px;
+}
+
+.like-comment-button-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  gap: 150px;
+}
+
+.like-icon {
+  font-size: 25px;
+  color: blue;
+}
+
+.write-comment-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.comment-input {
+  border-radius: 100px;
+  width: 530px;
+}
+
+.comment-container {
+  display: flex;
+  gap: 10px;
+}
+
+.comment {
+  background-color: #F0F2F5;
+  border-radius: 10px;
+  color: black;
+  min-width: 530px;
+  text-align: left;
+  padding: 10px 0 10px 0;
+}
+
+.comment-creator {
+  margin: 0 0 0 10px;
+}
+
+.comment-text {
+  margin: 0 0 0 10px;
 }
 
 /* MEDIA QUERIES */

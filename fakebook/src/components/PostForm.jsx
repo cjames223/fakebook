@@ -12,8 +12,6 @@ function PostForm () {
 
     const regRef = useRef()
 
-   
-
     const closeCreatePost = () => {
         regRef.current.style.opacity = 0;
         regRef.current.style.pointerEvents = 'none';

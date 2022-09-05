@@ -1,19 +1,5 @@
 import mongoose from 'mongoose'
 
-const date = new Date().toLocaleDateString('en', {
-    month: 'long', 
-    day: 'numeric'
-})
-
-const time = new Date().toLocaleTimeString('en', {
-    hour: 'numeric', 
-    minute: '2-digit'
-})
-
-let calcTime = `${date} at ${time}`
-
-console.log(calcTime)
-
 const postSchema = mongoose.Schema({
     title: String,
     body: String,
@@ -24,19 +10,9 @@ const postSchema = mongoose.Schema({
         type: Number,
         default: 0
     },
-    date: {
-        type: String,
-        default: new Date().toLocaleDateString('en', {
-            month: 'long',
-            day: 'numeric'
-        })
-    },
-    time: {
-        type: String,
-        default: new Date().toLocaleTimeString('en', {
-            hour: 'numeric',
-            minute: '2-digit'
-        })
+    createdAt: {
+        type: Date,
+        default: Date.now
     }
 })
 

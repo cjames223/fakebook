@@ -13,19 +13,19 @@ import { Avatar } from 'primereact/avatar'
 function Navbar () {
 
     return(
-        <div>
+        <div className='navbar-container'>
             <div className='navbar'>
                 <div>
                     <img alt="logo" src={logo} height="60" className="mr-2"></img>
                 </div>
-                <div className='navbar-search'>
+                <div className='navbar-search-container'>
                     <span className="p-input-icon-left">
                         <i className="pi pi-search" />
                         <InputText className='navbar-search' placeholder="Search Fakebook" />
                     </span>
                 </div>
                 <div>
-                    <Avatar image={img} shape='circle' size='xlarge' />
+                    <Avatar image={img} shape='circle' size='xlarge' className='navbar-avatar'/>
                 </div>
             </div>
         </div>

@@ -8,13 +8,13 @@ import Post from './Post'
 import { useSelector } from 'react-redux'
 
 function Posts () {
-    const posts = useSelector((state) => state.posts)
+    const allPosts = useSelector((state) => state.posts)
 
-    console.log(posts)
+    console.log(allPosts)
 
     return (
-        <div className='post-container'>
-                {posts.map((post) => (
+        <div className='all-post-container'>
+                {allPosts.map((post) => (
                     <Post post={post} />
                 ))}
         </div>

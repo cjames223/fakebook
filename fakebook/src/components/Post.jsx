@@ -3,6 +3,7 @@ import 'primereact/resources/themes/lara-light-indigo/theme.css';
 import 'primereact/resources/primereact.css';
 import 'primeflex/primeflex.css';
 import '../App.css';
+import moment from 'moment'
 import img from '../img/profile_img.jpg'
 
 import { useRef, useState } from 'react'
@@ -14,19 +15,24 @@ import { Menu } from 'primereact/menu'
 import { Toast } from 'primereact/toast'
 import { useDispatch } from 'react-redux'
 import { InputTextarea } from 'primereact/inputtextarea'
-import { Tooltip } from 'primereact/tooltip'
 import { FileUpload } from 'primereact/fileupload'
 import { Dialog } from 'primereact/dialog'
-import { createPost } from '../actions/posts'
+import { updatePost, deletePost, likePost } from '../actions/posts'
 
 function Post ({ post }) {
+    const dispatch = useDispatch()
+
     const [postData, setPostData] = useState({
         body: '',
         creator: '',
         selectedFile: ([]),
     })
 
+    const [currentId, setCurrentId] = useState()
+
     const [deleteDialog, setDeleteDialog] = useState(false);
+
+    const [totalSize, setTotalSize] = useState(0);
 
     const menu = useRef()
     const updateDeleteToast = useRef()
@@ -35,16 +41,16 @@ function Post ({ post }) {
     const regRefCreator = useRef()
     const regRefText = useRef()
     const regRefEmptyPost = useRef()
+    const fileUploadRef = useRef(null);
+    const commentInputRef = useRef()
+
+    console.log(commentInputRef)
 
     let items = [
         {label: 'Update', icon: 'pi pi-fw pi-refresh', command: () => {
-            updateDeleteToast.current.show({severity: 'success', summary: 'Updated', detail: 'Post Updated!', life: 3000})
-        }, command: () => {
             UpdatePost()
         }},
         {label: 'Delete', icon: 'pi pi-fw pi-trash', command: () => {
-            updateDeleteToast.current.show({severity: 'warn', summary: 'Deleted', detail: 'Post Deleted', life: 3000})
-        }, command: () => {
             setDeleteDialog(true)
         }}
     ]
@@ -53,16 +59,20 @@ function Post ({ post }) {
         setDeleteDialog(false);
     }
 
+    const postDelete = () => {
+        onHide()
+        dispatch(deletePost(post._id))
+        updateDeleteToast.current.show({severity: 'warn', summary: 'Deleted', detail: 'Post Deleted', life: 3000})
+    }
+
     const deleteDialogFooter = () => {
         return (
             <div>
                 <Button label="No" icon="pi pi-times" onClick={onHide} className="p-button-text" />
-                <Button label="Yes" icon="pi pi-check" onClick={onHide} autoFocus />
+                <Button label="Yes" icon="pi pi-check" onClick={postDelete} autoFocus />
             </div>
         );
     }
-
-    const dispatch = useDispatch()
 
     const showEmptyPost = () => {
         regRefEmptyPost.current.show({severity: 'error', summary: 'Error Message', detail: "Cannot submit empty post!", life: 3000})
@@ -73,10 +83,11 @@ function Post ({ post }) {
             regRef.current.style.opacity = 0;
             regRef.current.style.pointerEvents = 'none';
             regRefImg.current.style.display = 'none'
-            dispatch(createPost(postData))
+            dispatch(updatePost(currentId, postData))
             regRefText.current.value = ''
-            setPostData({ ...postData, selectedFile: ([])})
+            setPostData({ body: '', creator: '', selectedFile: ([])})
             fileUploadRef.current.clear()
+            updateDeleteToast.current.show({severity: 'success', summary: 'Updated', detail: 'Post Updated!', life: 3000})
         } else {
             showEmptyPost()
             }
@@ -86,6 +97,7 @@ function Post ({ post }) {
         regRef.current.style.opacity = 1;
         regRef.current.style.pointerEvents = 'auto';
         setPostData ({ ...postData, creator: regRefCreator.current.innerText})
+        setCurrentId (post._id)
     }
 
     const closeUpdatePost = () => {
@@ -106,11 +118,6 @@ function Post ({ post }) {
 
         setPostData({ ...postData, selectedFile: images})
     }
-
-    console.log(postData)
-
-    const [totalSize, setTotalSize] = useState(0);
-    const fileUploadRef = useRef(null);
 
     const onTemplateSelect = (e) => {
         let _totalSize = totalSize;
@@ -179,6 +186,8 @@ function Post ({ post }) {
 
     return (
         <div>
+            <Toast ref={regRefEmptyPost} />
+
             <div className='post-container'>
                 <Card className='post-template'>
                     <div className='post-inner-container'>
@@ -188,7 +197,7 @@ function Post ({ post }) {
                             </div>
                             <div>
                                 <span className='profile-name'>{post.creator}</span>
-                                <h4 className='time'>{`${post.date} at ${post.time}`}</h4>
+                                <h4 className='time'>{moment(post.createdAt).format('MMMM D [at] h:mm A')}</h4>
                             </div>
                             <div className='post-options-button-wrapper'>
                                 <Toast ref={updateDeleteToast} />
@@ -199,15 +208,15 @@ function Post ({ post }) {
                         <h2 className='post-body'>{post.body}</h2>
                         <img alt='post' className='post-image' src={post.selectedFile} />
                         <div className='like-comment-container'>
-                            <i className='pi pi-thumbs-up like-icon'><span className='like-count'>{post.likeCount}</span></i>
+                            <i className='pi pi-thumbs-up like-icon'><span id={post.likeCount} className='like-count'>{post.likeCount}</span></i>
                             <h3>Comments</h3>
                         </div>
                         <div>
                             <hr className='post-break' />
                         </div>
                         <div className='like-comment-button-container'>
-                            <Button label='Like' icon='pi pi-thumbs-up' className='p-button-secondary p-button-rounded p-button-text p-button-lg' />
-                            <Button label='Comment' icon='pi pi-comment' className='p-button-secondary p-button-rounded p-button-text p-button-lg' />
+                            <Button label='Like' icon='pi pi-thumbs-up' className='p-button-secondary p-button-rounded p-button-text p-button-lg like-comment-button' onClick={() => dispatch(likePost(post._id))} />
+                            <Button label='Comment' icon='pi pi-comment' className='p-button-secondary p-button-rounded p-button-text p-button-lg like-comment-button' />
                         </div>
                         <div>
                             <hr className='post-break' />
@@ -226,14 +235,14 @@ function Post ({ post }) {
                                 <Avatar image={img} shape='circle' size='large' />
                             </div>
                             <div>
-                                <InputText className='comment-input' placeholder='Write a comment...' />
+                                <InputText ref={commentInputRef} className='comment-input' placeholder='Write a comment...' />
                             </div>   
                         </div>
                     </div>
                 </Card>
             </div>
 
-            <div>
+            <div className='all-post-container'>
                 <div ref={regRef} className='create-post-modal-container'>
                     <div className='create-post-modal'>
                         <div className='create-post-close-button'>
@@ -257,10 +266,6 @@ function Post ({ post }) {
                             <InputTextarea ref={regRefText} className='post-text-area' rows={5} cols={30} placeholder="What's on your mind?" onChange={(e) => setPostData({ ...postData, body: e.target.value})}/>
                         </div>
                         <div ref={regRefImg}className='photo-upload-container'>
-                            <Tooltip target=".custom-choose-btn" content="Choose" position="bottom" />
-                            <Tooltip target=".custom-upload-btn" content="Upload" position="bottom" />
-                            <Tooltip target=".custom-cancel-btn" content="Clear" position="bottom" />
-
                             <div className="photo-upload">
                                 <FileUpload ref={fileUploadRef} customUpload={true} uploadHandler={uploadImg} multiple accept="image/*" maxFileSize={10000000}
                                     onUpload={onTemplateUpload} onSelect={onTemplateSelect} onError={onTemplateClear} onClear={onTemplateClear}
@@ -280,13 +285,10 @@ function Post ({ post }) {
                 </div>
             </div>
 
-            <div className="dialog-demo">
+            <div className="delete-dialog-container">
                 <div className="card">
-                    <Dialog header="Header" visible={deleteDialog} style={{ width: '50vw' }} footer={deleteDialogFooter} onHide={onHide}>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                        Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
-                        cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                    <Dialog header='DANGER' visible={deleteDialog} style={{ width: '50vw' }} footer={deleteDialogFooter} onHide={onHide} >
+                        <h1>Are you sure you want to delete this post?</h1>
                     </Dialog>
                 </div>
             </div>

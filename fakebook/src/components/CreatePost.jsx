@@ -23,11 +23,14 @@ function CreatePost () {
         selectedFile: ([]),
     })
 
+    const [totalSize, setTotalSize] = useState(0);
+    
     const regRef = useRef()
     const regRefImg = useRef()
     const regRefCreator = useRef()
     const regRefText = useRef()
     const regRefEmptyPost = useRef()
+    const fileUploadRef = useRef(null);
 
     const dispatch = useDispatch()
 
@@ -42,8 +45,9 @@ function CreatePost () {
             regRefImg.current.style.display = 'none'
             dispatch(createPost(postData))
             regRefText.current.value = ''
-            setPostData({ ...postData, selectedFile: ([])})
+            setPostData({ body: '', creator: '', selectedFile: ([])})
             fileUploadRef.current.clear()
+            regRefEmptyPost.current.show({severity: 'success', summary: 'Created', detail: "Post Created!", life: 3000})
         } else {
             showEmptyPost()
             }
@@ -73,11 +77,6 @@ function CreatePost () {
 
         setPostData({ ...postData, selectedFile: images})
     }
-
-    console.log(postData)
-
-    const [totalSize, setTotalSize] = useState(0);
-    const fileUploadRef = useRef(null);
 
     const onTemplateSelect = (e) => {
         let _totalSize = totalSize;
@@ -145,7 +144,7 @@ function CreatePost () {
     const cancelOptions = {icon: 'pi pi-fw pi-times', iconOnly: true, className: 'custom-cancel-btn p-button-danger p-button-rounded p-button-outlined'};
 
     return (
-        <div>
+        <div className='create-post-all-container'>
             <Toast ref={regRefEmptyPost} />
 
             <div className='create-post-container'>

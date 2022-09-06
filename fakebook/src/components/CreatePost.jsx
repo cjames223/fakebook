@@ -24,6 +24,8 @@ function CreatePost () {
     })
 
     const [totalSize, setTotalSize] = useState(0);
+
+    const [user, setUser] = useState(JSON.parse(localStorage.getItem('profile')))
     
     const regRef = useRef()
     const regRefImg = useRef()
@@ -33,6 +35,10 @@ function CreatePost () {
     const fileUploadRef = useRef(null);
 
     const dispatch = useDispatch()
+
+    const fullName = user.result.name
+    const picture = user.result.picture
+    const avatar_placeholder = `${user.result.given_name.charAt(0).toUpperCase()}${user.result.family_name.charAt(0).toUpperCase()}`
 
     const showEmptyPost = () => {
         regRefEmptyPost.current.show({severity: 'error', summary: 'Error Message', detail: "Cannot submit empty post!", life: 3000})
@@ -69,13 +75,20 @@ function CreatePost () {
         regRefImg.current.style.display = 'block'
     }
 
-    const uploadImg = (e) => {
+    const uploadImg =  (e) => {
         let images = []
-        e.files.forEach(file => {
-            images.push(file.objectURL)
+        const reader = new FileReader()
+        e.files.forEach(async file => {
+            let blob = await fetch(file.objectURL).then(r => r.blob())
+            reader.readAsDataURL(blob)
+            reader.onloadend = function () {
+                const base64data = reader.result
+                images.push(base64data)
+            }
         })
 
         setPostData({ ...postData, selectedFile: images})
+        console.log(postData)
     }
 
     const onTemplateSelect = (e) => {
@@ -150,7 +163,7 @@ function CreatePost () {
             <div className='create-post-container'>
                 <Card className='create-post-card'>
                     <div className='create-post'>
-                        <Avatar image={img} shape='circle' size='large' />
+                        <Avatar image={picture} imageAlt={avatar_placeholder} shape='circle' size='large' />
                         <button className='write-post-button' onClick={CreatePost}><span className='write-post-text'>What's on your mind?</span></button>
                     </div>
                 </Card>
@@ -184,7 +197,7 @@ function CreatePost () {
                         <Tooltip target=".custom-cancel-btn" content="Clear" position="bottom" />
 
                         <div className="photo-upload">
-                            <FileUpload ref={fileUploadRef} customUpload={true} uploadHandler={uploadImg} multiple accept="image/*" maxFileSize={10000000}
+                            <FileUpload ref={fileUploadRef} customUpload={true} uploadHandler={uploadImg} accept="image/*" maxFileSize={10000000}
                                 onUpload={onTemplateUpload} onSelect={onTemplateSelect} onError={onTemplateClear} onClear={onTemplateClear}
                                 headerTemplate={headerTemplate} itemTemplate={itemTemplate} emptyTemplate={emptyTemplate}
                                 chooseOptions={chooseOptions} cancelOptions={cancelOptions} auto />

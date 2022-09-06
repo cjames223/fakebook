@@ -10,8 +10,6 @@ import { useSelector } from 'react-redux'
 function Posts () {
     const allPosts = useSelector((state) => state.posts)
 
-    console.log(allPosts)
-
     return (
         <div className='all-post-container'>
                 {allPosts.map((post) => (

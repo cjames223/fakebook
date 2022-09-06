@@ -34,6 +34,8 @@ function Post ({ post }) {
 
     const [totalSize, setTotalSize] = useState(0);
 
+    const [user, setUser] = useState(JSON.parse(localStorage.getItem('profile')))
+
     const menu = useRef()
     const updateDeleteToast = useRef()
     const regRef = useRef()
@@ -44,7 +46,9 @@ function Post ({ post }) {
     const fileUploadRef = useRef(null);
     const commentInputRef = useRef()
 
-    console.log(commentInputRef)
+    const fullName = user.result.name
+    const picture = user.result.picture
+    const avatar_placeholder = `${user.result.given_name.charAt(0).toUpperCase()}${user.result.family_name.charAt(0).toUpperCase()}`
 
     let items = [
         {label: 'Update', icon: 'pi pi-fw pi-refresh', command: () => {
@@ -110,10 +114,16 @@ function Post ({ post }) {
         regRefImg.current.style.display = 'block'
     }
 
-    const uploadImg = (e) => {
+    const uploadImg =  (e) => {
         let images = []
-        e.files.forEach(file => {
-            images.push(file.objectURL)
+        const reader = new FileReader()
+        e.files.forEach(async file => {
+            let blob = await fetch(file.objectURL).then(r => r.blob())
+            reader.readAsDataURL(blob)
+            reader.onloadend = function () {
+                const base64data = reader.result
+                images.push(base64data)
+            }
         })
 
         setPostData({ ...postData, selectedFile: images})
@@ -216,7 +226,7 @@ function Post ({ post }) {
                         </div>
                         <div className='like-comment-button-container'>
                             <Button label='Like' icon='pi pi-thumbs-up' className='p-button-secondary p-button-rounded p-button-text p-button-lg like-comment-button' onClick={() => dispatch(likePost(post._id))} />
-                            <Button label='Comment' icon='pi pi-comment' className='p-button-secondary p-button-rounded p-button-text p-button-lg like-comment-button' />
+                            <Button label='Comment' icon='pi pi-comment' className='p-button-secondary p-button-rounded p-button-text p-button-lg like-comment-button' onClick={() => commentInputRef.current.focus()}/>
                         </div>
                         <div>
                             <hr className='post-break' />
@@ -232,7 +242,7 @@ function Post ({ post }) {
                         </div>
                         <div className='write-comment-container'>
                             <div>
-                                <Avatar image={img} shape='circle' size='large' />
+                                <Avatar image={picture} shape='circle' size='large' />
                             </div>
                             <div>
                                 <InputText ref={commentInputRef} className='comment-input' placeholder='Write a comment...' />
@@ -267,7 +277,7 @@ function Post ({ post }) {
                         </div>
                         <div ref={regRefImg}className='photo-upload-container'>
                             <div className="photo-upload">
-                                <FileUpload ref={fileUploadRef} customUpload={true} uploadHandler={uploadImg} multiple accept="image/*" maxFileSize={10000000}
+                                <FileUpload ref={fileUploadRef} customUpload={true} uploadHandler={uploadImg} accept="image/*" maxFileSize={10000000}
                                     onUpload={onTemplateUpload} onSelect={onTemplateSelect} onError={onTemplateClear} onClear={onTemplateClear}
                                     headerTemplate={headerTemplate} itemTemplate={itemTemplate} emptyTemplate={emptyTemplate}
                                     chooseOptions={chooseOptions} cancelOptions={cancelOptions} auto />

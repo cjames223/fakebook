@@ -5,25 +5,34 @@ import 'primeflex/primeflex.css';
 import '../App.css';
 
 import React, { useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom'
 import { Form, Field } from 'react-final-form';
+import { useDispatch } from 'react-redux';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { Calendar } from 'primereact/calendar';
 import { Password } from 'primereact/password';
-import { Checkbox } from 'primereact/checkbox';
 import { Dialog } from 'primereact/dialog';
 import { Divider } from 'primereact/divider';
 import { classNames } from 'primereact/utils';
+import { signup } from '../actions/auth'
 
 function Register () {
     const [showMessage, setShowMessage] = useState(false);
     const [formData, setFormData] = useState({});
 
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
+
     const validate = (data) => {
         let errors = {};
 
-        if (!data.name) {
-            errors.name = 'Name is required.';
+        if (!data.first_name) {
+            errors.first_name = 'First name is required.';
+        }
+
+        if(!data.last_name) {
+            errors.last_name = 'Last name is required'
         }
 
         if (!data.email) {
@@ -37,8 +46,8 @@ function Register () {
             errors.password = 'Password is required.';
         }
 
-        if (!data.accept) {
-            errors.accept = 'You need to agree to the terms and conditions.';
+        if (data.confirm_password !== data.password) {
+            errors.confirm_password = 'Passwords do not match.'
         }
 
         return errors;
@@ -46,6 +55,7 @@ function Register () {
 
     const onSubmit = (data, form) => {
         setFormData(data);
+        dispatch(signup(formData, navigate))    
         setShowMessage(true);
 
         form.restart();
@@ -91,23 +101,29 @@ function Register () {
                         <div className="flex align-items-center flex-column pt-6 px-3">
                             <i className="pi pi-check-circle" style={{ fontSize: '5rem', color: 'var(--green-500)' }}></i>
                             <h5>Registration Successful!</h5>
-                            <p style={{ lineHeight: 1.5, textIndent: '1rem' }}>
-                                Your account is registered under name <b>{formData.name}</b> ; it'll be valid next 30 days without activation. Please check <b>{formData.email}</b> for activation instructions.
-                            </p>
                         </div>
                     </Dialog>
 
-                    <div className="flex justify-content-center">
+                    <div className="justify-content-center">
                         <div>
                             <Button icon='pi pi-times' className='close p-button-rounded p-button-danger' aria-label='Cancel' onClick={closeCreateAccount}/>
                             <h5 className="text-center">Register</h5>
-                            <Form onSubmit={onSubmit} initialValues={{ name: '', email: '', password: '', date: null, country: null, accept: false }} validate={validate} render={({ handleSubmit }) => (
+                            <Form onSubmit={onSubmit} initialValues={{ first_name: '', last_name: '', email: '', password: '', confirm_password: '', date: null, accept: false }} validate={validate} render={({ handleSubmit }) => (
                                 <form onSubmit={handleSubmit} className="p-fluid">
-                                    <Field name="name" render={({ input, meta }) => (
+                                    <Field name="first_name" render={({ input, meta }) => (
                                         <div className="field">
                                             <span className="p-float-label">
-                                                <InputText id="name" {...input} autoFocus className={classNames({ 'p-invalid': isFormFieldValid(meta) })} />
-                                                <label htmlFor="name" className={classNames({ 'p-error': isFormFieldValid(meta) })}>Name*</label>
+                                                <InputText id="first_name" {...input} autoFocus className={classNames({ 'p-invalid': isFormFieldValid(meta) })} />
+                                                <label htmlFor="first_name" className={classNames({ 'p-error': isFormFieldValid(meta) })}>First Name*</label>
+                                            </span>
+                                            {getFormErrorMessage(meta)}
+                                        </div>
+                                    )} />
+                                    <Field name="last_name" render={({ input, meta }) => (
+                                        <div className="field">
+                                            <span className="p-float-label">
+                                                <InputText id="last_name" {...input} autoFocus className={classNames({ 'p-invalid': isFormFieldValid(meta) })} />
+                                                <label htmlFor="last_name" className={classNames({ 'p-error': isFormFieldValid(meta) })}>Last Name*</label>
                                             </span>
                                             {getFormErrorMessage(meta)}
                                         </div>
@@ -131,6 +147,15 @@ function Register () {
                                             {getFormErrorMessage(meta)}
                                         </div>
                                     )} />
+                                    <Field name="confirm_password" render={({ input, meta }) => (
+                                        <div className="field">
+                                            <span className="p-float-label">
+                                                <Password id="confirm_password" {...input} toggleMask className={classNames({ 'p-invalid': isFormFieldValid(meta) })}   />
+                                                <label htmlFor="confirm_password" className={classNames({ 'p-error': isFormFieldValid(meta) })}>Confirm Password*</label>
+                                            </span>
+                                            {getFormErrorMessage(meta)}
+                                        </div>
+                                    )} />
                                     <Field name="date" render={({ input }) => (
                                         <div className="field">
                                             <span className="p-float-label">
@@ -139,12 +164,6 @@ function Register () {
                                             </span>
                                         </div>
                                     )} />    
-                                    <Field name="accept" type="checkbox" render={({ input, meta }) => (
-                                        <div className="field-checkbox">
-                                            <Checkbox inputId="accept" {...input} className={classNames({ 'p-invalid': isFormFieldValid(meta) })} />
-                                            <label htmlFor="accept" className={classNames({ 'p-error': isFormFieldValid(meta) })}>I agree to the terms and conditions*</label>
-                                        </div>
-                                    )} />
 
                                     <Button type="submit" label="Create Account" className="mt-2" />
                                 </form>

@@ -27,12 +27,12 @@ function Register () {
     const validate = (data) => {
         let errors = {};
 
-        if (!data.first_name) {
-            errors.first_name = 'First name is required.';
+        if (!data.given_name) {
+            errors.given_name = 'First name is required.';
         }
 
-        if(!data.last_name) {
-            errors.last_name = 'Last name is required'
+        if(!data.family_name) {
+            errors.family_name = 'Last name is required'
         }
 
         if (!data.email) {
@@ -110,20 +110,20 @@ function Register () {
                             <h5 className="text-center">Register</h5>
                             <Form onSubmit={onSubmit} initialValues={{ first_name: '', last_name: '', email: '', password: '', confirm_password: '', date: null, accept: false }} validate={validate} render={({ handleSubmit }) => (
                                 <form onSubmit={handleSubmit} className="p-fluid">
-                                    <Field name="first_name" render={({ input, meta }) => (
+                                    <Field name="given_name" render={({ input, meta }) => (
                                         <div className="field">
                                             <span className="p-float-label">
-                                                <InputText id="first_name" {...input} autoFocus className={classNames({ 'p-invalid': isFormFieldValid(meta) })} />
-                                                <label htmlFor="first_name" className={classNames({ 'p-error': isFormFieldValid(meta) })}>First Name*</label>
+                                                <InputText id="given_name" {...input} autoFocus className={classNames({ 'p-invalid': isFormFieldValid(meta) })} />
+                                                <label htmlFor="given_name" className={classNames({ 'p-error': isFormFieldValid(meta) })}>First Name*</label>
                                             </span>
                                             {getFormErrorMessage(meta)}
                                         </div>
                                     )} />
-                                    <Field name="last_name" render={({ input, meta }) => (
+                                    <Field name="family_name" render={({ input, meta }) => (
                                         <div className="field">
                                             <span className="p-float-label">
-                                                <InputText id="last_name" {...input} autoFocus className={classNames({ 'p-invalid': isFormFieldValid(meta) })} />
-                                                <label htmlFor="last_name" className={classNames({ 'p-error': isFormFieldValid(meta) })}>Last Name*</label>
+                                                <InputText id="family_name" {...input} autoFocus className={classNames({ 'p-invalid': isFormFieldValid(meta) })} />
+                                                <label htmlFor="family_name" className={classNames({ 'p-error': isFormFieldValid(meta) })}>Last Name*</label>
                                             </span>
                                             {getFormErrorMessage(meta)}
                                         </div>
@@ -159,7 +159,7 @@ function Register () {
                                     <Field name="date" render={({ input }) => (
                                         <div className="field">
                                             <span className="p-float-label">
-                                                <Calendar id="date" {...input} dateFormat="dd/mm/yy" mask="99/99/9999" showIcon />
+                                                <Calendar id="date" {...input} dateFormat="mm/dd/yy" mask="99/99/9999" showIcon />
                                                 <label htmlFor="date">Birthday</label>
                                             </span>
                                         </div>

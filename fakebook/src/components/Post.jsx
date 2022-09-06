@@ -18,13 +18,14 @@ import { InputTextarea } from 'primereact/inputtextarea'
 import { FileUpload } from 'primereact/fileupload'
 import { Dialog } from 'primereact/dialog'
 import { updatePost, deletePost, likePost } from '../actions/posts'
+import { useEffect } from 'react';
 
 function Post ({ post }) {
     const dispatch = useDispatch()
 
     const [postData, setPostData] = useState({
         body: '',
-        creator: '',
+        name: '',
         selectedFile: ([]),
     })
 
@@ -34,17 +35,19 @@ function Post ({ post }) {
 
     const [totalSize, setTotalSize] = useState(0);
 
+    const [postAvatar, setPostAvatar] = useState()
+
     const [user, setUser] = useState(JSON.parse(localStorage.getItem('profile')))
 
     const menu = useRef()
     const updateDeleteToast = useRef()
     const regRef = useRef()
     const regRefImg = useRef()
-    const regRefCreator = useRef()
     const regRefText = useRef()
     const regRefEmptyPost = useRef()
     const fileUploadRef = useRef(null);
     const commentInputRef = useRef()
+    const postAvatarImg = useRef()
 
     const fullName = user.result.name
     const picture = user.result.picture
@@ -89,7 +92,7 @@ function Post ({ post }) {
             regRefImg.current.style.display = 'none'
             dispatch(updatePost(currentId, postData))
             regRefText.current.value = ''
-            setPostData({ body: '', creator: '', selectedFile: ([])})
+            setPostData({ body: '', name: '', selectedFile: ([])})
             fileUploadRef.current.clear()
             updateDeleteToast.current.show({severity: 'success', summary: 'Updated', detail: 'Post Updated!', life: 3000})
         } else {
@@ -100,7 +103,7 @@ function Post ({ post }) {
     const UpdatePost = () => {
         regRef.current.style.opacity = 1;
         regRef.current.style.pointerEvents = 'auto';
-        setPostData ({ ...postData, creator: regRefCreator.current.innerText})
+        setPostData ({ ...postData, name: post.name})
         setCurrentId (post._id)
     }
 
@@ -194,6 +197,12 @@ function Post ({ post }) {
     const chooseOptions = {icon: 'pi pi-fw pi-images', iconOnly: true, className: 'custom-choose-btn p-button-rounded p-button-outlined'};
     const cancelOptions = {icon: 'pi pi-fw pi-times', iconOnly: true, className: 'custom-cancel-btn p-button-danger p-button-rounded p-button-outlined'};
 
+    useEffect(() => {
+        if(user?.result?.sub === post?.creator || user?.result?._id === post?.creator) {
+            setPostAvatar(user.result.picture)
+        }       
+    }, [])
+
     return (
         <div>
             <Toast ref={regRefEmptyPost} />
@@ -203,22 +212,24 @@ function Post ({ post }) {
                     <div className='post-inner-container'>
                         <div className='post-avatar-container'>
                             <div>
-                                <Avatar image={img} shape='circle' size='xlarge' />
+                                <Avatar image={postAvatar} imageAlt={avatar_placeholder} shape='circle' size='xlarge' />
                             </div>
                             <div>
-                                <span className='profile-name'>{post.creator}</span>
+                                <span className='profile-name'>{post.name}</span>
                                 <h4 className='time'>{moment(post.createdAt).format('MMMM D [at] h:mm A')}</h4>
                             </div>
                             <div className='post-options-button-wrapper'>
                                 <Toast ref={updateDeleteToast} />
                                 <Menu model={items} popup ref={menu} />
-                                <Button icon="pi pi-list" className="p-button-secondary p-button-lg p-button-rounded p-button-text post-options-button" onClick={(event) => menu.current.toggle(event)} />
+                                {(user?.result?.sub === post?.creator || user?.result?._id === post?.creator) && (
+                                    <Button icon="pi pi-list" className="p-button-secondary p-button-lg p-button-rounded p-button-text post-options-button" onClick={(event) => menu.current.toggle(event)} />
+                                )}
                             </div>
                         </div>
                         <h2 className='post-body'>{post.body}</h2>
                         <img alt='post' className='post-image' src={post.selectedFile} />
                         <div className='like-comment-container'>
-                            <i className='pi pi-thumbs-up like-icon'><span id={post.likeCount} className='like-count'>{post.likeCount}</span></i>
+                            <i className='pi pi-thumbs-up like-icon'><span id={post.likes.length} className='like-count'>{post.likes.length}</span></i>
                             <h3>Comments</h3>
                         </div>
                         <div>
@@ -233,7 +244,7 @@ function Post ({ post }) {
                         </div>
                         <div className='comment-container'>
                             <div>
-                                <Avatar image={img} shape='circle' size='small' />
+                                <Avatar shape='circle' size='small' />
                             </div>
                             <div className='comment'>
                                 <h3 className='comment-creator'>Carlton James Jr.</h3>
@@ -242,7 +253,7 @@ function Post ({ post }) {
                         </div>
                         <div className='write-comment-container'>
                             <div>
-                                <Avatar image={picture} shape='circle' size='large' />
+                                <Avatar image={picture} imageAlt={avatar_placeholder} shape='circle' size='large' />
                             </div>
                             <div>
                                 <InputText ref={commentInputRef} className='comment-input' placeholder='Write a comment...' />
@@ -266,16 +277,16 @@ function Post ({ post }) {
                         <hr className='create-post-break' />
                         <div className='create-avatar-container'>
                             <div>
-                                <Avatar image={img} shape='circle' size='xlarge' />
+                                <Avatar image={picture} imageAlt={avatar_placeholder} shape='circle' size='xlarge' />
                             </div>
                             <div>
-                                <span ref={regRefCreator} value={postData.creator} className='profile-name'>Carlton James Jr.</span>
+                                <span className='profile-name'>{post.name}</span>
                             </div>
                         </div>
                         <div>
                             <InputTextarea ref={regRefText} className='post-text-area' rows={5} cols={30} placeholder="What's on your mind?" onChange={(e) => setPostData({ ...postData, body: e.target.value})}/>
                         </div>
-                        <div ref={regRefImg}className='photo-upload-container'>
+                        <div ref={regRefImg} className='photo-upload-container'>
                             <div className="photo-upload">
                                 <FileUpload ref={fileUploadRef} customUpload={true} uploadHandler={uploadImg} accept="image/*" maxFileSize={10000000}
                                     onUpload={onTemplateUpload} onSelect={onTemplateSelect} onError={onTemplateClear} onClear={onTemplateClear}

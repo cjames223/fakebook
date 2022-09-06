@@ -19,28 +19,28 @@ export const signin = async (req, res) => {
 
         res.status(200).json({ result: existingUser, token })
     } catch (error) {
-        res.status(500).json({ message: 'Something went wrong' })
+        res.status(500).json({ message: 'Something went wrong.' })
     }
 }
 
 export const signup = async (req, res) => {
-    const { email, password, first_name, last_name } = req.body
+    const { email, password, confirm_password, given_name, family_name, date } = req.body
 
     try {
         const existingUser = await User.findOne({ email })
 
         if(existingUser) return res.status(400).json({ message: "User already exists."})
 
-        if(password !== confirmPassword) return res.status(400).json({ message: "Passwords don't match."})
+        if(password !== confirm_password) return res.status(400).json({ message: "Passwords don't match."})
 
         const hashedPassword = await bcrypt.hash(password, 12)
 
-        const result = await User.create({ email, password: hashedPassword, name: `${first_name} ${last_name}` })
+        const result = await User.create({ email, password: hashedPassword, given_name: given_name, family_name: family_name, name: `${given_name} ${family_name}`, birthday: date })
 
-        const token = jwt.sign({ email: result.email, id: result._id }, 'test', { expiresIn: '1h' })
+        const token = jwt.sign({ email: result.email, id: result._id }, 'test', { expiresIn: '365 days' })
 
         res.status(200).json({ result, token })
     } catch (error) {
-        res.status(500).json({ message: 'Something went wrong' })
+        res.status(500).json({ message: 'Something went wrong.' })
     }
 }

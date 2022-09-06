@@ -24,9 +24,9 @@ function Navbar () {
 
     const menu = useRef()
 
-    const fullName = user.result.name
-    const picture = user.result.picture
-    const avatar_placeholder = `${user.result.given_name.charAt(0).toUpperCase()}${user.result.family_name.charAt(0).toUpperCase()}`
+    let fullName = user.result.name
+    let picture = user.result.picture
+    let avatar_placeholder = `${user.result.given_name.charAt(0).toUpperCase()}${user.result.family_name.charAt(0).toUpperCase()}`
 
     let items = [
         {label: fullName, icon: <Avatar shape='circle' size='small' className='navbar-avatar' image={picture} imageAlt={avatar_placeholder} />},

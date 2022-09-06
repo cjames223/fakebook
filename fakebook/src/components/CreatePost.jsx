@@ -19,7 +19,7 @@ import { Toast } from 'primereact/toast'
 function CreatePost () {
     const [postData, setPostData] = useState({
         body: '',
-        creator: '',
+        name: '',
         selectedFile: ([]),
     })
 
@@ -29,7 +29,6 @@ function CreatePost () {
     
     const regRef = useRef()
     const regRefImg = useRef()
-    const regRefCreator = useRef()
     const regRefText = useRef()
     const regRefEmptyPost = useRef()
     const fileUploadRef = useRef(null);
@@ -51,7 +50,7 @@ function CreatePost () {
             regRefImg.current.style.display = 'none'
             dispatch(createPost(postData))
             regRefText.current.value = ''
-            setPostData({ body: '', creator: '', selectedFile: ([])})
+            setPostData({ body: '', name: '', selectedFile: ([])})
             fileUploadRef.current.clear()
             regRefEmptyPost.current.show({severity: 'success', summary: 'Created', detail: "Post Created!", life: 3000})
         } else {
@@ -62,7 +61,7 @@ function CreatePost () {
     const CreatePost = () => {
         regRef.current.style.opacity = 1;
         regRef.current.style.pointerEvents = 'auto';
-        setPostData ({ ...postData, creator: regRefCreator.current.innerText})
+        setPostData ({ ...postData, name: fullName})
     }
 
     const closeCreatePost = () => {
@@ -156,6 +155,8 @@ function CreatePost () {
     const chooseOptions = {icon: 'pi pi-fw pi-images', iconOnly: true, className: 'custom-choose-btn p-button-rounded p-button-outlined'};
     const cancelOptions = {icon: 'pi pi-fw pi-times', iconOnly: true, className: 'custom-cancel-btn p-button-danger p-button-rounded p-button-outlined'};
 
+    console.log(postData)
+
     return (
         <div className='create-post-all-container'>
             <Toast ref={regRefEmptyPost} />
@@ -182,10 +183,10 @@ function CreatePost () {
                     <hr className='create-post-break' />
                     <div className='create-avatar-container'>
                         <div>
-                            <Avatar image={img} shape='circle' size='xlarge' />
+                            <Avatar image={picture} shape='circle' size='xlarge' />
                         </div>
                         <div>
-                            <span ref={regRefCreator} value={postData.creator} className='profile-name'>Carlton James Jr.</span>
+                            <span className='profile-name'>{fullName}</span>
                         </div>
                     </div>
                     <div>

@@ -5,16 +5,36 @@ import 'primeflex/primeflex.css';
 import '../App.css';
 
 import Post from './Post'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import React, { useState, useEffect, useRef } from 'react'
+import { getAllPostContainer } from '../actions/all_post_container'
 
 function Posts () {
-    const allPosts = useSelector((state) => state.posts)
+    const dispatch = useDispatch()
+
+    let allPosts = useSelector((state) => state.posts)
+console.log(allPosts)
+    const revPosts = allPosts.slice().reverse()
+
+    const [user, setUser] = useState(JSON.parse(localStorage.getItem('profile')))
+
+    const [postContainer, setPostContainer] = useState()
+
+    const allPostContainer = useRef()
+console.log(allPosts)
+    useEffect(() => {
+       dispatch(getAllPostContainer(allPostContainer))
+    }, [])
 
     return (
-        <div className='all-post-container'>
-                {allPosts.map((post) => (
-                    <Post post={post} />
-                ))}
+        <div ref={allPostContainer} className='all-post-container'>  
+                {revPosts.map((post) => {
+                    if(user?.result.sub === post?.creator || user?.result._id === post?.creator) {
+                        return (
+                            <Post post={post} />
+                        )
+                    }
+                })}
         </div>
     )
     

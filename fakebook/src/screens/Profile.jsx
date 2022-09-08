@@ -7,18 +7,21 @@ import '../App.css';
 import Navbar from '../components/Navbar'
 import CreatePost from '../components/CreatePost'
 import Posts from '../components/Posts'
+import Header from '../components/Header'
+import PhotoGallery from '../components/PhotoGallery';
 
-function Home () {
-
+function Profile () {
     return (
         <div>
             <div>
                 <Navbar />
+                <Header />
                 <CreatePost />
-                <Posts />  
+                <PhotoGallery />
+                <Posts />
             </div>
         </div>
     )
 }
 
-export default Home
+export default Profile

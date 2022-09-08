@@ -19,7 +19,6 @@ import { signup } from '../actions/auth'
 
 function Register () {
     const [showMessage, setShowMessage] = useState(false);
-    const [formData, setFormData] = useState({});
 
     const dispatch = useDispatch()
     const navigate = useNavigate()
@@ -54,8 +53,7 @@ function Register () {
     };
 
     const onSubmit = (data, form) => {
-        setFormData(data);
-        dispatch(signup(formData, navigate))    
+        dispatch(signup(data, navigate))    
         setShowMessage(true);
 
         form.restart();

@@ -6,25 +6,28 @@ import '../App.css';
 import moment from 'moment'
 import img from '../img/profile_img.jpg'
 
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { Card } from 'primereact/card'
 import { Avatar } from 'primereact/avatar'
 import { Button } from 'primereact/button'
 import { InputText } from 'primereact/inputtext'
 import { Menu } from 'primereact/menu'
 import { Toast } from 'primereact/toast'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { InputTextarea } from 'primereact/inputtextarea'
 import { FileUpload } from 'primereact/fileupload'
 import { Dialog } from 'primereact/dialog'
 import { updatePost, deletePost, likePost } from '../actions/posts'
-import { useEffect } from 'react';
 
 function Post ({ post }) {
     const dispatch = useDispatch()
 
+    const users = useSelector((state) => state.users)
+
     const [postData, setPostData] = useState({
         body: '',
+        given_name: '',
+        family_name: '',
         name: '',
         selectedFile: ([]),
     })
@@ -33,11 +36,11 @@ function Post ({ post }) {
 
     const [deleteDialog, setDeleteDialog] = useState(false);
 
-    const [totalSize, setTotalSize] = useState(0);
-
     const [postAvatar, setPostAvatar] = useState()
 
-    const [user, setUser] = useState(JSON.parse(localStorage.getItem('profile')))
+    const [postAvatarLabel, setPostAvatarLabel] = useState()
+
+    const [loggedUser, setLoggedUser] = useState(JSON.parse(localStorage.getItem('profile')))
 
     const menu = useRef()
     const updateDeleteToast = useRef()
@@ -47,11 +50,9 @@ function Post ({ post }) {
     const regRefEmptyPost = useRef()
     const fileUploadRef = useRef(null);
     const commentInputRef = useRef()
-    const postAvatarImg = useRef()
 
-    const fullName = user.result.name
-    const picture = user.result.picture
-    const avatar_placeholder = `${user.result.given_name.charAt(0).toUpperCase()}${user.result.family_name.charAt(0).toUpperCase()}`
+    const picture = loggedUser.result.picture
+    const avatar_placeholder = `${loggedUser.result.given_name.charAt(0).toUpperCase()}${loggedUser.result.family_name.charAt(0).toUpperCase()}`
 
     let items = [
         {label: 'Update', icon: 'pi pi-fw pi-refresh', command: () => {
@@ -92,7 +93,7 @@ function Post ({ post }) {
             regRefImg.current.style.display = 'none'
             dispatch(updatePost(currentId, postData))
             regRefText.current.value = ''
-            setPostData({ body: '', name: '', selectedFile: ([])})
+            setPostData({ body: '', given_name: '', family_name: '', name: '', selectedFile: ([])})
             fileUploadRef.current.clear()
             updateDeleteToast.current.show({severity: 'success', summary: 'Updated', detail: 'Post Updated!', life: 3000})
         } else {
@@ -103,7 +104,7 @@ function Post ({ post }) {
     const UpdatePost = () => {
         regRef.current.style.opacity = 1;
         regRef.current.style.pointerEvents = 'auto';
-        setPostData ({ ...postData, name: post.name})
+        setPostData ({ ...postData, name: post.name, given_name: post.given_name, family_name: post.family_name})
         setCurrentId (post._id)
     }
 
@@ -111,6 +112,9 @@ function Post ({ post }) {
         regRef.current.style.opacity = 0;
         regRef.current.style.pointerEvents = 'none';
         regRefImg.current.style.display = 'none'
+        regRefText.current.value = ''
+        fileUploadRef.current.clear()
+        setPostData({ body: '', given_name: '', family_name: '', name: '', selectedFile: ([])})
     }
 
     const uploadPhoto = () => {
@@ -130,34 +134,17 @@ function Post ({ post }) {
         })
 
         setPostData({ ...postData, selectedFile: images})
+        console.log(postData)
     }
 
-    const onTemplateSelect = (e) => {
-        let _totalSize = totalSize;
-        e.files.forEach(file => {
-            _totalSize += file.size;
-        });
+    
 
-        setTotalSize(_totalSize);
-    }
-
-    const onTemplateUpload = (e) => {
-        let _totalSize = 0;
-        e.files.forEach(file => {
-            _totalSize += (file.size || 0);
-        });
-
-        setTotalSize(_totalSize);
-    }
-
-    const onTemplateRemove = (file, callback) => {
-        setTotalSize(totalSize - file.size);
+    const onTemplateRemove = (callback) => {
+        setPostData({ ...postData, selectedFile: ([])})
         callback();
     }
 
-    const onTemplateClear = () => {
-        setTotalSize(0);
-    }
+
 
     const headerTemplate = (options) => {
         const { className, chooseButton, cancelButton } = options;
@@ -180,7 +167,7 @@ function Post ({ post }) {
                         <small>{new Date().toLocaleDateString()}</small>
                     </span>
                 </div>
-                <Button type="button" icon="pi pi-times" className="p-button-outlined p-button-rounded p-button-danger ml-auto" onClick={() => onTemplateRemove(file, props.onRemove)} />
+                <Button type="button" icon="pi pi-times" className="p-button-outlined p-button-rounded p-button-danger ml-auto" onClick={() => onTemplateRemove(props.onRemove)} />
             </div>
         )
     }
@@ -196,11 +183,14 @@ function Post ({ post }) {
 
     const chooseOptions = {icon: 'pi pi-fw pi-images', iconOnly: true, className: 'custom-choose-btn p-button-rounded p-button-outlined'};
     const cancelOptions = {icon: 'pi pi-fw pi-times', iconOnly: true, className: 'custom-cancel-btn p-button-danger p-button-rounded p-button-outlined'};
-
+    
     useEffect(() => {
-        if(user?.result?.sub === post?.creator || user?.result?._id === post?.creator) {
-            setPostAvatar(user.result.picture)
-        }       
+        users.forEach(async user => {
+            if(user?.sub === post?.creator || user?._id === post?.creator) {
+                setPostAvatar(user.picture)
+                setPostAvatarLabel(`${user.given_name.charAt(0).toUpperCase()}${user.family_name.charAt(0).toUpperCase()}`)
+            }         
+        })
     }, [])
 
     return (
@@ -212,7 +202,7 @@ function Post ({ post }) {
                     <div className='post-inner-container'>
                         <div className='post-avatar-container'>
                             <div>
-                                <Avatar image={postAvatar} imageAlt={avatar_placeholder} shape='circle' size='xlarge' />
+                                <Avatar image={postAvatar} label={postAvatarLabel} shape='circle' size='xlarge' />
                             </div>
                             <div>
                                 <span className='profile-name'>{post.name}</span>
@@ -221,7 +211,7 @@ function Post ({ post }) {
                             <div className='post-options-button-wrapper'>
                                 <Toast ref={updateDeleteToast} />
                                 <Menu model={items} popup ref={menu} />
-                                {(user?.result?.sub === post?.creator || user?.result?._id === post?.creator) && (
+                                {(loggedUser?.result?.sub === post?.creator || loggedUser?.result?._id === post?.creator) && (
                                     <Button icon="pi pi-list" className="p-button-secondary p-button-lg p-button-rounded p-button-text post-options-button" onClick={(event) => menu.current.toggle(event)} />
                                 )}
                             </div>
@@ -253,7 +243,7 @@ function Post ({ post }) {
                         </div>
                         <div className='write-comment-container'>
                             <div>
-                                <Avatar image={picture} imageAlt={avatar_placeholder} shape='circle' size='large' />
+                                <Avatar image={picture} label={avatar_placeholder} shape='circle' size='large' />
                             </div>
                             <div>
                                 <InputText ref={commentInputRef} className='comment-input' placeholder='Write a comment...' />
@@ -277,7 +267,7 @@ function Post ({ post }) {
                         <hr className='create-post-break' />
                         <div className='create-avatar-container'>
                             <div>
-                                <Avatar image={picture} imageAlt={avatar_placeholder} shape='circle' size='xlarge' />
+                                <Avatar image={picture} label={avatar_placeholder} shape='circle' size='xlarge' />
                             </div>
                             <div>
                                 <span className='profile-name'>{post.name}</span>
@@ -289,13 +279,12 @@ function Post ({ post }) {
                         <div ref={regRefImg} className='photo-upload-container'>
                             <div className="photo-upload">
                                 <FileUpload ref={fileUploadRef} customUpload={true} uploadHandler={uploadImg} accept="image/*" maxFileSize={10000000}
-                                    onUpload={onTemplateUpload} onSelect={onTemplateSelect} onError={onTemplateClear} onClear={onTemplateClear}
                                     headerTemplate={headerTemplate} itemTemplate={itemTemplate} emptyTemplate={emptyTemplate}
                                     chooseOptions={chooseOptions} cancelOptions={cancelOptions} auto />
                             </div>
                         </div>
                         <div className='add-to-post-container'>
-                            <div>
+                            <div className='post-button-container'>
                                 <Button label='Post' className='p-button-raised post-button' onClick={handleSubmit}/>
                             </div>
                             <div>

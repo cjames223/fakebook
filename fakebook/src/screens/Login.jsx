@@ -18,7 +18,6 @@ import { signin } from '../actions/auth';
 
 function Login () {
     const [showMessage, setShowMessage] = useState(false);
-    const [formData, setFormData] = useState({});
 
     const dispatch = useDispatch()
     const navigate = useNavigate()
@@ -40,12 +39,15 @@ function Login () {
         return errors;
     };
 
-    const onSubmit = (data, form) => {
-        setFormData(data);
-        dispatch(signin(formData, navigate))
-        setShowMessage(true);
-
-        form.restart();
+    const onSubmit = async (data, form) => {
+        try {
+            dispatch(signin(data, navigate))
+            setShowMessage(true);
+    
+            form.restart();    
+        } catch (error) {
+            console.log(error)
+        }
     };
 
     const isFormFieldValid = (meta) => !!(meta.touched && meta.error);
@@ -54,20 +56,7 @@ function Login () {
     };
 
     const dialogFooter = <div className="flex justify-content-center"><Button label="OK" className="p-button-text" autoFocus onClick={() => setShowMessage(false) } /></div>;
-
-    const handleCallbackResponse = async (res) => {
-        const result = jwt_decode(res.credential)
-        const token = res?.credential
-
-        try {
-            dispatch({ type: 'AUTH', data: { result, token }})
-
-            navigate('/home')
-        } catch (error) {
-            console.log(error)
-        }
-    }
-    
+ 
     useEffect(() => {
         /* global google */
         google.accounts.id.initialize({
@@ -81,6 +70,17 @@ function Login () {
         )
     }, [])
 
+    const handleCallbackResponse = async (res) => {
+        const result = jwt_decode(res.credential)
+        const token = res?.credential
+
+        try {
+            dispatch({ type: 'AUTH', data: { result, token }})
+            navigate('/home')
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
     return (
         
@@ -99,7 +99,7 @@ function Login () {
                                         <div className="field">
                                             <span className="p-float-label p-input-icon-right">
                                                 <i className="pi pi-envelope" />
-                                                <InputText id="email" {...input} className={classNames({ 'p-invalid': isFormFieldValid(meta) })} />
+                                                <InputText id="email" {...input} className={classNames({ 'p-invalid': isFormFieldValid(meta) })}  />
                                                 <label htmlFor="email" className={classNames({ 'p-error': isFormFieldValid(meta) })}>Email*</label>
                                             </span>
                                             {getFormErrorMessage(meta)}
@@ -108,7 +108,7 @@ function Login () {
                                     <Field name="password" render={({ input, meta }) => (
                                         <div className="field">
                                             <span className="p-float-label">
-                                                <Password id="password" {...input} toggleMask className={classNames({ 'p-invalid': isFormFieldValid(meta) })} feedback={false} />
+                                                <Password id="password" {...input} toggleMask className={classNames({ 'p-invalid': isFormFieldValid(meta) })} feedback={false}  />
                                                 <label htmlFor="password" className={classNames({ 'p-error': isFormFieldValid(meta) })}>Password*</label>
                                             </span>
                                             {getFormErrorMessage(meta)}

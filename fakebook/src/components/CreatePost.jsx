@@ -5,7 +5,7 @@ import 'primeflex/primeflex.css';
 import '../App.css';
 import img from '../img/profile_img.jpg'
 
-import React, { useRef, useState } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import { InputTextarea } from 'primereact/inputtextarea'
 import { Button } from 'primereact/button'
 import { Avatar } from 'primereact/avatar'
@@ -14,30 +14,34 @@ import { FileUpload } from 'primereact/fileupload'
 import { Tooltip } from 'primereact/tooltip'
 import { useDispatch } from 'react-redux'
 import { createPost } from '../actions/posts'
+import { getCreatePostContainer } from '../actions/create_post_container';
 import { Toast } from 'primereact/toast'
 
 function CreatePost () {
+    const dispatch = useDispatch()
+
     const [postData, setPostData] = useState({
         body: '',
+        given_name: '',
+        family_name: '',
         name: '',
         selectedFile: ([]),
     })
 
-    const [totalSize, setTotalSize] = useState(0);
-
-    const [user, setUser] = useState(JSON.parse(localStorage.getItem('profile')))
-    
+    let user = JSON.parse(localStorage.getItem('profile'))
+   
     const regRef = useRef()
     const regRefImg = useRef()
     const regRefText = useRef()
     const regRefEmptyPost = useRef()
     const fileUploadRef = useRef(null);
+    const createPostContainer = useRef()
 
-    const dispatch = useDispatch()
-
-    const fullName = user.result.name
-    const picture = user.result.picture
-    const avatar_placeholder = `${user.result.given_name.charAt(0).toUpperCase()}${user.result.family_name.charAt(0).toUpperCase()}`
+    const givenName = user?.result.given_name
+    const familyName = user?.result.family_name
+    const fullName = user?.result.name
+    const picture = user?.result.picture
+    const avatar_placeholder = `${user?.result.given_name.charAt(0).toUpperCase()}${user?.result.family_name.charAt(0).toUpperCase()}`
 
     const showEmptyPost = () => {
         regRefEmptyPost.current.show({severity: 'error', summary: 'Error Message', detail: "Cannot submit empty post!", life: 3000})
@@ -50,7 +54,7 @@ function CreatePost () {
             regRefImg.current.style.display = 'none'
             dispatch(createPost(postData))
             regRefText.current.value = ''
-            setPostData({ body: '', name: '', selectedFile: ([])})
+            setPostData({ body: '', given_name: '', family_name: '', name: '', selectedFile: ([])})
             fileUploadRef.current.clear()
             regRefEmptyPost.current.show({severity: 'success', summary: 'Created', detail: "Post Created!", life: 3000})
         } else {
@@ -61,13 +65,16 @@ function CreatePost () {
     const CreatePost = () => {
         regRef.current.style.opacity = 1;
         regRef.current.style.pointerEvents = 'auto';
-        setPostData ({ ...postData, name: fullName})
+        setPostData ({ ...postData, name: fullName, given_name: givenName, family_name: familyName})
     }
 
     const closeCreatePost = () => {
         regRef.current.style.opacity = 0;
         regRef.current.style.pointerEvents = 'none';
         regRefImg.current.style.display = 'none'
+        regRefText.current.value = ''
+        fileUploadRef.current.clear()
+        setPostData({ body: '', given_name: '', family_name: '', name: '', selectedFile: ([])})
     }
 
     const uploadPhoto = () => {
@@ -88,34 +95,12 @@ function CreatePost () {
 
         setPostData({ ...postData, selectedFile: images})
         console.log(postData)
-    }
+    }  
 
-    const onTemplateSelect = (e) => {
-        let _totalSize = totalSize;
-        e.files.forEach(file => {
-            _totalSize += file.size;
-        });
-
-        setTotalSize(_totalSize);
-    }
-
-    const onTemplateUpload = (e) => {
-        let _totalSize = 0;
-        e.files.forEach(file => {
-            _totalSize += (file.size || 0);
-        });
-
-        setTotalSize(_totalSize);
-    }
-
-    const onTemplateRemove = (file, callback) => {
-        setTotalSize(totalSize - file.size);
+    const onTemplateRemove = (callback) => {
+        setPostData({ ...postData, selectedFile: ([])})
         callback();
-    }
-
-    const onTemplateClear = () => {
-        setTotalSize(0);
-    }
+    } 
 
     const headerTemplate = (options) => {
         const { className, chooseButton, cancelButton } = options;
@@ -155,16 +140,18 @@ function CreatePost () {
     const chooseOptions = {icon: 'pi pi-fw pi-images', iconOnly: true, className: 'custom-choose-btn p-button-rounded p-button-outlined'};
     const cancelOptions = {icon: 'pi pi-fw pi-times', iconOnly: true, className: 'custom-cancel-btn p-button-danger p-button-rounded p-button-outlined'};
 
-    console.log(postData)
+    useEffect(() => {
+        dispatch(getCreatePostContainer(createPostContainer))
+    })
 
     return (
         <div className='create-post-all-container'>
             <Toast ref={regRefEmptyPost} />
 
-            <div className='create-post-container'>
+            <div ref={createPostContainer} className='create-post-container'>
                 <Card className='create-post-card'>
                     <div className='create-post'>
-                        <Avatar image={picture} imageAlt={avatar_placeholder} shape='circle' size='large' />
+                        <Avatar image={picture} label={avatar_placeholder} shape='circle' size='large' />
                         <button className='write-post-button' onClick={CreatePost}><span className='write-post-text'>What's on your mind?</span></button>
                     </div>
                 </Card>
@@ -183,7 +170,7 @@ function CreatePost () {
                     <hr className='create-post-break' />
                     <div className='create-avatar-container'>
                         <div>
-                            <Avatar image={picture} shape='circle' size='xlarge' />
+                            <Avatar image={picture} label={avatar_placeholder} shape='circle' size='xlarge' />
                         </div>
                         <div>
                             <span className='profile-name'>{fullName}</span>
@@ -199,13 +186,12 @@ function CreatePost () {
 
                         <div className="photo-upload">
                             <FileUpload ref={fileUploadRef} customUpload={true} uploadHandler={uploadImg} accept="image/*" maxFileSize={10000000}
-                                onUpload={onTemplateUpload} onSelect={onTemplateSelect} onError={onTemplateClear} onClear={onTemplateClear}
                                 headerTemplate={headerTemplate} itemTemplate={itemTemplate} emptyTemplate={emptyTemplate}
                                 chooseOptions={chooseOptions} cancelOptions={cancelOptions} auto />
                         </div>
                     </div>
                     <div className='add-to-post-container'>
-                        <div>
+                        <div className='post-button-container'>
                             <Button label='Post' className='p-button-raised post-button' onClick={handleSubmit}/>
                         </div>
                         <div>

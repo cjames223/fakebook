@@ -7,8 +7,10 @@ const userSchema = mongoose.Schema({
     email: { type: String, required: true },
     password: { type: String, required: true },
     id: { type: String },
-    picture: { type: String },
-    birthday: { type: Date }
+    profileImage: { type: String },
+    images: { type: [String] },
+    birthday: { type: Date },
+    friends: { type: [String] }
 })
 
 export default mongoose.model('User', userSchema)

@@ -1,8 +1,15 @@
 import mongoose from 'mongoose'
-import Schema from 'mongoose'
 
 const profileSchema = mongoose.Schema({
-    user: [{ type: Schema.Types.ObjectId, ref: 'User', required: true }]
+    userId: { type: String, required: true },
+    given_name: { type: String, required: true },
+    family_name: { type: String, required: true },
+    name: { type: String, required: true },
+    email: { type: String, required: true },
+    profileImage: { type: String },
+    birthday: { type: Date },
+    images: { type: [String] },
+    friends: { type: [String] },
 })
 
 export default mongoose.model('Profile', profileSchema)

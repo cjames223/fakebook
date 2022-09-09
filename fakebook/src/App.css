@@ -451,15 +451,20 @@ img[src=''] {
 
 .photo-container {
   display: flex;
-  justify-content: center;
+  flex-direction: row;
+  justify-content: flex-start;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: 18px;
+  width: fit-content;
+  margin: 0 auto;
 }
 
 .photos {
   position: static;
   border-radius: 10px;
   width: 250px;
+  height: 250px;
+  object-fit: cover;
 }
 
 .photo-header {

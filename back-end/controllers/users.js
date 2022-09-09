@@ -47,9 +47,9 @@ export const signup = async (req, res) => {
 
         const hashedPassword = await bcrypt.hash(password, 12)
 
-        const result = await User.create({ email, password: hashedPassword, given_name: given_name, family_name: family_name, name: `${given_name} ${family_name}`, birthday: date })
+        const result = await User.create({ email, password: hashedPassword, given_name: given_name, family_name: family_name, name: `${given_name} ${family_name}` })
 
-        await Profile.create({user: result._id})
+        await Profile.create({ userId: result._id, email, password: hashedPassword, given_name: given_name, family_name: family_name, name: `${given_name} ${family_name}`, birthday: date })
 
         const token = jwt.sign({ email: result.email, id: result._id }, 'test', { expiresIn: '365 days' })
 
@@ -57,15 +57,4 @@ export const signup = async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: 'Something went wrong.' })
     }
-}
-
-export const updateUser = async (req, res) => {
-    const { id: _id } = req.params
-    const user = req.body
-
-    if(!mongoose.Types.ObjectId.isValid(_id)) return res.status(403).send('User does not have access rights')
-
-    const updatedUser = await User.findByIdAndUpdate(_id, user, { new: true })
-
-    res.json(updatedUser)
 }

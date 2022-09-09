@@ -19,7 +19,8 @@ import { Image } from 'primereact/image'
 import { TabMenu } from 'primereact/tabmenu'
 import { Galleria } from 'primereact/galleria'
 import { getPhotoContainerCard } from '../actions/photo_container_card'
-import { updateUser } from '../actions/users'
+import { uploadPhoto } from '../actions/profiles'
+import { ConnectedOverlayScrollHandler } from 'primereact/utils';
 
 const PhotoGallery = () => {
     const dispatch = useDispatch()
@@ -27,12 +28,12 @@ const PhotoGallery = () => {
     let user = JSON.parse(localStorage.getItem('profile'))
 
     let users = useSelector((state) => state.users)
+    let profiles = useSelector((state) => state.profiles)
 console.log(users)
-    const [imgData, setImgData] = useState({
-        images: ([])
-    })
+console.log(profiles)
+    const [imgData, setImgData] = useState([])
 
-    const [galleryImages, setGalleryImages] = useState()
+    const [galleryImages, setGalleryImages] = useState([])
 
     const [currentId, setCurrentId] = useState([])
 
@@ -41,25 +42,36 @@ console.log(users)
     const fileUploadRef = useRef()
 
     const uploadImg = async (e)  =>  {
-        let images = []
+        let base64images = []
         const reader = new FileReader()
 
         let blob = await fetch(e.files[0].objectURL).then(r => r.blob())
         reader.readAsDataURL(blob)
         reader.onloadend = function () {
             const base64data = reader.result
-            images.push(base64data)
-            setImgData({images: images})
-            setCurrentId(user.result._id)
+            base64images.push(base64data)
+            setImgData(base64images)
+            console.log(imgData)
         }
-        
-        dispatch(updateUser(currentId, imgData))
-        fileUploadRef.current.clear()
+        dispatch(uploadPhoto(currentId, imgData))
         photoUploadToast.current.show({severity: 'info', summary: 'Success', detail: 'File Uploaded with Basic Mode'})
+        fileUploadRef.current.clear()
     }
 
     useEffect(() => {
+        for (let i of users) {
+            for (let j of profiles) {
+                if (i._id === j.userId) {
+                    console.log(j)
+                    return setGalleryImages(j.images)
+                }
+            } 
+        }
+    })
+
+    useEffect(() => {
         dispatch(getPhotoContainerCard(photoContainerCard))
+        setCurrentId(user.result._id)
     }, [dispatch])
 
     return (
@@ -71,11 +83,17 @@ console.log(users)
                         <h1>Photos</h1>
                     </div>
                     <div>
-                        <FileUpload ref={fileUploadRef} mode="basic" name="photo-upload" customUpload  accept="image/*" auto maxFileSize={1000000} uploadHandler={uploadImg} />
+                        <FileUpload ref={fileUploadRef} mode="basic" name="photo-upload" customUpload  accept="image/*" auto maxFileSize={10000000} uploadHandler={uploadImg} />
                     </div>
                 </div>
-                <div className='photo-container'>
-                    <Image imageClassName='photos' src={galleryImages} preview downloadable />
+                <div className='photo-container' >
+                    {galleryImages.map((image) => {
+                        return (
+                            <div>
+                                <Image imageClassName='photos' src={image} downloadable />
+                            </div>   
+                        )
+                    })}
                 </div>
             </Card>
         </div>

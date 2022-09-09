@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux'
 import { useEffect } from 'react'
 import { getPosts } from './actions/posts'
 import { getUsers } from './actions/users'
+import { getProfiles } from './actions/profiles'
 
 
 import Login from './screens/Login'
@@ -19,6 +20,7 @@ function App() {
   useEffect(() => {
     dispatch(getPosts())
     dispatch(getUsers())
+    dispatch(getProfiles())
   }, [dispatch])
 
   useEffect(() => {

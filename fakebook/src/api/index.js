@@ -20,4 +20,6 @@ export const signIn = (FormData) => API.post('/user/signin', FormData)
 export const signUp = (FormData) => API.post('/user/signup', FormData)
 
 export const fetchUsers = () => API.get('/user')
-export const updateUser = (id, updatedUser) => API.patch(`/user/${id}`, updatedUser)
+
+export const fetchProfiles = () => API.get('/profile')
+export const uploadPhoto = (id, uploadedPhoto) => API.patch(`/profile/${id}`, uploadedPhoto)

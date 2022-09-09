@@ -15,7 +15,7 @@ export const getProfiles = async (req, res) => {
 export const getProfile = async (req, res) => {
     const { id } = req.params
     try {
-        const Profile = await Profile.findById(id)
+        const Profile = await Profile.find({ userId: id })
 
         res.status(200).json(Profile)
     } catch (error) {

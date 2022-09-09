@@ -15,6 +15,17 @@ export const getUsers = async (req, res) => {
     }
 }
 
+export const getUser = async (req, res) => {
+    const { id } = req.params
+    try {
+        const Users = await User.findById(id)
+
+        res.status(200).json(Users)
+    } catch (error) {
+        res.status(404).json({ message: error.message })
+    }
+}
+
 export const signin = async (req, res) => {
     const { email, password } = req.body
 

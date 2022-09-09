@@ -5,7 +5,7 @@ export default (profiles = [], action) => {
         case FETCH_ALL_PROFILES:
             return action.payload
         case UPLOAD_PHOTO:
-            return profiles.map((profile) => profile.user === action.payload._id ? action.payload : profile)
+            return profiles.map((profile) => profile.userId === action.payload._id ? action.payload : profile)
         default:
             return profiles
     }

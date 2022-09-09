@@ -1,5 +1,4 @@
 import mongoose from 'mongoose'
-import ObjectId from 'mongoose'
 import Profile from '../models/profile.js'
 import User from '../models/user.js'
 
@@ -13,7 +12,16 @@ export const getProfiles = async (req, res) => {
     }
 }
 
+export const getProfile = async (req, res) => {
+    const { id } = req.params
+    try {
+        const Profile = await Profile.findById(id)
 
+        res.status(200).json(Profile)
+    } catch (error) {
+        res.status(404).json({ message: error.message })
+    }
+}
 
 export const uploadPhoto = async (req, res) => {
     const { id } = req.params

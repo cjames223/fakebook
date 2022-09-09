@@ -16,6 +16,8 @@ export const uploadPhoto = (id, photoData) => async (dispatch) => {
         const { data } = await api.uploadPhoto(id, photoData)
 
         dispatch({ type: UPLOAD_PHOTO, payload: data})
+
+        return data.images
     } catch (error) {
         console.log(error)
     }

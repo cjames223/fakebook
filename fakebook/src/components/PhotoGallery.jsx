@@ -20,7 +20,6 @@ import { TabMenu } from 'primereact/tabmenu'
 import { Galleria } from 'primereact/galleria'
 import { getPhotoContainerCard } from '../actions/photo_container_card'
 import { uploadPhoto } from '../actions/profiles'
-import { ConnectedOverlayScrollHandler } from 'primereact/utils';
 
 const PhotoGallery = () => {
     const dispatch = useDispatch()
@@ -41,28 +40,35 @@ console.log(profiles)
     const photoContainerCard = useRef()
     const fileUploadRef = useRef()
 
+    // const dispatchImage = async () => {
+    //     await dispatch(uploadPhoto(currentId, imgData))
+    //     console.log(profilePhotos)
+    //     setGalleryImages(profilePhotos)
+    //     console.log(galleryImages)
+    // }    
+
     const uploadImg = async (e)  =>  {
         let base64images = []
         const reader = new FileReader()
 
         let blob = await fetch(e.files[0].objectURL).then(r => r.blob())
         reader.readAsDataURL(blob)
-        reader.onloadend = function () {
+        reader.onloadend = async function () {
             const base64data = reader.result
+            console.log(base64data)
             base64images.push(base64data)
-            setImgData(base64images)
-            console.log(imgData)
+            await setImgData(base64data)
         }
-        dispatch(uploadPhoto(currentId, imgData))
-        photoUploadToast.current.show({severity: 'info', summary: 'Success', detail: 'File Uploaded with Basic Mode'})
+        await dispatch(uploadPhoto(currentId, imgData))
+        photoUploadToast.current.show({severity: 'info', summary: 'Success', detail: 'Photo Uploaded!'})
         fileUploadRef.current.clear()
+        return setImgData([])
     }
 
     useEffect(() => {
         for (let i of users) {
             for (let j of profiles) {
                 if (i._id === j.userId) {
-                    console.log(j)
                     return setGalleryImages(j.images)
                 }
             } 
@@ -72,7 +78,7 @@ console.log(profiles)
     useEffect(() => {
         dispatch(getPhotoContainerCard(photoContainerCard))
         setCurrentId(user.result._id)
-    }, [dispatch])
+    }, [])
 
     return (
         <div>

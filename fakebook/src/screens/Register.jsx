@@ -25,7 +25,7 @@ function Register () {
 
     const validate = (data) => {
         let errors = {};
-
+console.log(data)
         if (!data.given_name) {
             errors.given_name = 'First name is required.';
         }
@@ -53,10 +53,11 @@ function Register () {
     };
 
     const onSubmit = (data, form) => {
+        console.log(data)
         dispatch(signup(data, navigate))    
         setShowMessage(true);
 
-        form.restart();
+        // form.restart();
     };
 
     const isFormFieldValid = (meta) => !!(meta.touched && meta.error);
@@ -106,7 +107,7 @@ function Register () {
                         <div>
                             <Button icon='pi pi-times' className='close p-button-rounded p-button-danger' aria-label='Cancel' onClick={closeCreateAccount}/>
                             <h5 className="text-center">Register</h5>
-                            <Form onSubmit={onSubmit} initialValues={{ first_name: '', last_name: '', email: '', password: '', confirm_password: '', date: null, accept: false }} validate={validate} render={({ handleSubmit }) => (
+                            <Form onSubmit={onSubmit} initialValues={{ given_name: '', family_name: '', email: '', password: '', confirm_password: '', date: null }} validate={validate} render={({ handleSubmit }) => (
                                 <form onSubmit={handleSubmit} className="p-fluid">
                                     <Field name="given_name" render={({ input, meta }) => (
                                         <div className="field">

@@ -13,15 +13,17 @@ function Posts () {
     const dispatch = useDispatch()
 
     let allPosts = useSelector((state) => state.posts)
-console.log(allPosts)
+
     const revPosts = allPosts.slice().reverse()
 
     const [user, setUser] = useState(JSON.parse(localStorage.getItem('profile')))
 
-    const [postContainer, setPostContainer] = useState()
-
     const allPostContainer = useRef()
-console.log(allPosts)
+
+    const currentLocation = window.location.pathname.split('/')
+    const home = currentLocation[1]
+    const currentProfile = currentLocation[2]
+
     useEffect(() => {
        dispatch(getAllPostContainer(allPostContainer))
     }, [])
@@ -29,11 +31,11 @@ console.log(allPosts)
     return (
         <div ref={allPostContainer} className='all-post-container'>  
                 {revPosts.map((post) => {
-                    if(user?.result.sub === post?.creator || user?.result._id === post?.creator) {
+                    if(post?.creator === currentProfile || home === 'home' && post?.creator === user.result._id) {
                         return (
                             <Post post={post} />
-                        )
-                    }
+                        )   
+                    }   
                 })}
         </div>
     )

@@ -12,21 +12,26 @@ import { Avatar } from 'primereact/avatar'
 import { Card } from 'primereact/card'
 import { FileUpload } from 'primereact/fileupload'
 import { Tooltip } from 'primereact/tooltip'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { createPost } from '../actions/posts'
+import { uploadPhoto } from '../actions/images'
 import { getCreatePostContainer } from '../actions/create_post_container';
 import { Toast } from 'primereact/toast'
+import { Form } from 'react-final-form'
 
 function CreatePost () {
     const dispatch = useDispatch()
 
+    let profiles = useSelector((state) => state.profiles)
+
     const [postData, setPostData] = useState({
-        body: '',
-        given_name: '',
-        family_name: '',
-        name: '',
-        selectedFile: ([]),
+            body: '',
+            given_name: '',
+            family_name: '',
+            name: '',
     })
+
+    const [imgData, setImgData] = useState()
 
     let user = JSON.parse(localStorage.getItem('profile'))
    
@@ -43,18 +48,25 @@ function CreatePost () {
     const picture = user?.result.picture
     const avatar_placeholder = `${user?.result.given_name.charAt(0).toUpperCase()}${user?.result.family_name.charAt(0).toUpperCase()}`
 
+    const currentLocation = window.location.pathname.split('/')
+    const currentProfile = currentLocation[2]
+
     const showEmptyPost = () => {
         regRefEmptyPost.current.show({severity: 'error', summary: 'Error Message', detail: "Cannot submit empty post!", life: 3000})
     }
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (e) => {
         if (regRefText.current.value !== '' || postData.selectedFile.length !== 0) {
             regRef.current.style.opacity = 0;
             regRef.current.style.pointerEvents = 'none';
             regRefImg.current.style.display = 'none'
-            dispatch(createPost(postData))
+            console.log(e)
+            const newPost = new FormData();
+            newPost.set('data', JSON.stringify(postData))
+            newPost.append('post-photo', imgData)
+            dispatch(createPost(newPost))
             regRefText.current.value = ''
-            setPostData({ body: '', given_name: '', family_name: '', name: '', selectedFile: ([])})
+            setPostData({ body: '', given_name: '', family_name: '', name: ''})
             fileUploadRef.current.clear()
             regRefEmptyPost.current.show({severity: 'success', summary: 'Created', detail: "Post Created!", life: 3000})
         } else {
@@ -74,33 +86,21 @@ function CreatePost () {
         regRefImg.current.style.display = 'none'
         regRefText.current.value = ''
         fileUploadRef.current.clear()
-        setPostData({ body: '', given_name: '', family_name: '', name: '', selectedFile: ([])})
+        setPostData({ body: '', given_name: '', family_name: '', name: ''})
     }
 
     const uploadPhoto = () => {
         regRefImg.current.style.display = 'block'
     }
 
-    const uploadImg =  (e) => {
-        let images = []
-        const reader = new FileReader()
-        e.files.forEach(async file => {
-            let blob = await fetch(file.objectURL).then(r => r.blob())
-            reader.readAsDataURL(blob)
-            reader.onloadend = function () {
-                const base64data = reader.result
-                images.push(base64data)
-            }
-        })
-
-        setPostData({ ...postData, selectedFile: images})
-        console.log(postData)
-    }  
+    const uploadImg =  ({files}) => {
+        setImgData(files[0])
+    }
 
     const onTemplateRemove = (callback) => {
-        setPostData({ ...postData, selectedFile: ([])})
+        setImgData()
         callback();
-    } 
+    }
 
     const headerTemplate = (options) => {
         const { className, chooseButton, cancelButton } = options;
@@ -123,7 +123,7 @@ function CreatePost () {
                         <small>{new Date().toLocaleDateString()}</small>
                     </span>
                 </div>
-                <Button type="button" icon="pi pi-times" className="p-button-outlined p-button-rounded p-button-danger ml-auto" onClick={() => onTemplateRemove(file, props.onRemove)} />
+                <Button type="button" icon="pi pi-times" className="p-button-outlined p-button-rounded p-button-danger ml-auto" onClick={() => onTemplateRemove(props.onRemove)} />
             </div>
         )
     }
@@ -144,6 +144,12 @@ function CreatePost () {
         dispatch(getCreatePostContainer(createPostContainer))
     })
 
+    // useEffect(() => {
+    //     if(user?.result._id !== currentProfile || user?.result._id) {
+    //         createPostContainer.current.style.display = 'none'
+    //     }
+    // })
+
     return (
         <div className='create-post-all-container'>
             <Toast ref={regRefEmptyPost} />
@@ -157,6 +163,7 @@ function CreatePost () {
                 </Card>
             </div>
             
+
             <div ref={regRef} className='create-post-modal-container'>
                 <div className='create-post-modal'>
                     <div className='create-post-close-button'>
@@ -179,27 +186,29 @@ function CreatePost () {
                     <div>
                         <InputTextarea ref={regRefText} className='post-text-area' rows={5} cols={30} placeholder="What's on your mind?" onChange={(e) => setPostData({ ...postData, body: e.target.value})}/>
                     </div>
+                    
                     <div ref={regRefImg}className='photo-upload-container'>
                         <Tooltip target=".custom-choose-btn" content="Choose" position="bottom" />
                         <Tooltip target=".custom-upload-btn" content="Upload" position="bottom" />
                         <Tooltip target=".custom-cancel-btn" content="Clear" position="bottom" />
 
                         <div className="photo-upload">
-                            <FileUpload ref={fileUploadRef} customUpload={true} uploadHandler={uploadImg} accept="image/*" maxFileSize={10000000}
+                            <FileUpload ref={fileUploadRef} name='post-photo' accept="image/*" maxFileSize={10000000}
                                 headerTemplate={headerTemplate} itemTemplate={itemTemplate} emptyTemplate={emptyTemplate}
-                                chooseOptions={chooseOptions} cancelOptions={cancelOptions} auto />
+                                chooseOptions={chooseOptions} cancelOptions={cancelOptions} customUpload uploadHandler={uploadImg} auto />                         
                         </div>
                     </div>
                     <div className='add-to-post-container'>
                         <div className='post-button-container'>
-                            <Button label='Post' className='p-button-raised post-button' onClick={handleSubmit}/>
+                            <Button label='Post' className='p-button-raised post-button' onClick={handleSubmit} />
                         </div>
                         <div>
-                            <Button icon='pi pi-images' className='p-button-success  img-button' onClick={uploadPhoto}/>
+                            <Button type='button' icon='pi pi-images' className='p-button-success  img-button' onClick={uploadPhoto}/>
                         </div>
-                    </div>
+                    </div>   
                 </div>
             </div>
+
         </div>
     )
 }

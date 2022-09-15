@@ -1,6 +1,5 @@
 import mongoose from 'mongoose'
 import Profile from '../models/profile.js'
-import User from '../models/user.js'
 
 export const getProfiles = async (req, res) => {
     try {
@@ -13,37 +12,12 @@ export const getProfiles = async (req, res) => {
 }
 
 export const getProfile = async (req, res) => {
-    const { id } = req.params
-    try {
-        const Profile = await Profile.find({ userId: id })
-
-        res.status(200).json(Profile)
-    } catch (error) {
-        res.status(404).json({ message: error.message })
-    }
-}
-
-export const uploadPhoto = async (req, res) => {
-    const { id } = req.params
-
-    const photo = req.body
+    const { id: _id } = req.params
+    const post = req.body
     
-    if(!mongoose.Types.ObjectId.isValid(id)) return res.status(403).send('User not found')
+    if(!mongoose.Types.ObjectId.isValid(_id)) return res.status(404).send('Profile not found')
 
-    const user = await User.findById(id)
-    const profile = await Profile.find({ userId: id })
+    const profile = await Profile.findById(_id)
 
-    const userId = user._id.toHexString()
-
-    if(userId === profile[0].userId) {
-        profile[0].images.push(photo[0])    
-    } else {
-        return res.status(403).send('User is not allowed to make this request')
-    }
-    
-    const filter = { userId: id }
-    
-    const uploadedPhoto = await Profile.findOneAndUpdate(filter, profile[0], { new: true })
-
-    res.json(uploadedPhoto)
+    res.json(profile)
 }

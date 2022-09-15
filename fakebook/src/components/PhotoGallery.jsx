@@ -5,7 +5,7 @@ import 'primeflex/primeflex.css';
 import '../App.css';
 import img from '../img/profile_img.jpg'
 
-import React, { useRef, useEffect, useState } from 'react'
+import React, { useRef, useEffect, useState, useCallback } from 'react'
 import { InputTextarea } from 'primereact/inputtextarea'
 import { Button } from 'primereact/button'
 import { Avatar } from 'primereact/avatar'
@@ -19,66 +19,53 @@ import { Image } from 'primereact/image'
 import { TabMenu } from 'primereact/tabmenu'
 import { Galleria } from 'primereact/galleria'
 import { getPhotoContainerCard } from '../actions/photo_container_card'
-import { uploadPhoto } from '../actions/profiles'
+import { uploadPhoto } from '../actions/images'
+import { applyMiddleware } from 'redux';
 
 const PhotoGallery = () => {
     const dispatch = useDispatch()
 
+    const [refresh, setRefresh] = useState({
+        refresh: false
+    })
+
+    const currentLocation = window.location.pathname.split('/')
+    const currentProfile = currentLocation[2]
+
     let user = JSON.parse(localStorage.getItem('profile'))
 
-    let users = useSelector((state) => state.users)
-    let profiles = useSelector((state) => state.profiles)
-console.log(users)
-console.log(profiles)
-    const [imgData, setImgData] = useState([])
-
-    const [galleryImages, setGalleryImages] = useState([])
-
-    const [currentId, setCurrentId] = useState([])
+    let images = useSelector((state) => state.images)
 
     const photoUploadToast = useRef()
     const photoContainerCard = useRef()
     const fileUploadRef = useRef()
+    
+    const userId = user.result._id
 
-    // const dispatchImage = async () => {
-    //     await dispatch(uploadPhoto(currentId, imgData))
-    //     console.log(profilePhotos)
-    //     setGalleryImages(profilePhotos)
-    //     console.log(galleryImages)
-    // }    
+    const getUserId = (e) => {
+        e.formData.append('ID', userId)
+        console.log(e)
+        console.log(e.formData.get('photo'))
+    }    
 
     const uploadImg = async (e)  =>  {
-        let base64images = []
-        const reader = new FileReader()
-
-        let blob = await fetch(e.files[0].objectURL).then(r => r.blob())
-        reader.readAsDataURL(blob)
-        reader.onloadend = async function () {
-            const base64data = reader.result
-            console.log(base64data)
-            base64images.push(base64data)
-            await setImgData(base64data)
-        }
-        await dispatch(uploadPhoto(currentId, imgData))
         photoUploadToast.current.show({severity: 'info', summary: 'Success', detail: 'Photo Uploaded!'})
-        fileUploadRef.current.clear()
-        return setImgData([])
     }
 
-    useEffect(() => {
-        for (let i of users) {
-            for (let j of profiles) {
-                if (i._id === j.userId) {
-                    return setGalleryImages(j.images)
-                }
-            } 
-        }
-    })
+    const galleryRefresh = (e) => {
+        setTimeout(() => {
+            setRefresh((prev) => ({ ...prev, refresh: true }))
+        }, 5000);
+    }
+
+    console.log(photoUploadToast)
 
     useEffect(() => {
         dispatch(getPhotoContainerCard(photoContainerCard))
-        setCurrentId(user.result._id)
+        setRefresh({ refresh: false })
     }, [])
+
+    let date = Date.now()
 
     return (
         <div>
@@ -89,16 +76,18 @@ console.log(profiles)
                         <h1>Photos</h1>
                     </div>
                     <div>
-                        <FileUpload ref={fileUploadRef} mode="basic" name="photo-upload" customUpload  accept="image/*" auto maxFileSize={10000000} uploadHandler={uploadImg} />
+                        <FileUpload ref={fileUploadRef} mode="basic" url='/image' name="photo" accept="image/*" auto maxFileSize={10000000} onBeforeSend={getUserId} onProgress={uploadImg} onUpload={galleryRefresh} />
                     </div>
                 </div>
                 <div className='photo-container' >
-                    {galleryImages.map((image) => {
-                        return (
-                            <div>
-                                <Image imageClassName='photos' src={image} downloadable />
-                            </div>   
-                        )
+                    {images.map((image) => {
+                        if (image.uploadedBy === currentProfile) {
+                            return (
+                                <div>
+                                    <Image imageClassName='photos' src={`http://localhost:5000/${image.path}`} onClick={() => console.log('it works')} style={{cursor: 'pointer'}} downloadable />
+                                </div>  
+                            )
+                        }
                     })}
                 </div>
             </Card>

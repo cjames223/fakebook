@@ -1,7 +1,8 @@
 import mongoose from 'mongoose'
+import Schema from 'mongoose'
 
 const profileSchema = mongoose.Schema({
-    userId: { type: String, required: true },
+    _id: { type: String },
     given_name: { type: String, required: true },
     family_name: { type: String, required: true },
     name: { type: String, required: true },
@@ -9,8 +10,7 @@ const profileSchema = mongoose.Schema({
     profileImage: { type: String },
     coverImage: { type: String },
     birthday: { type: Date },
-    images: { type: [String] },
-    friends: { type: [String] },
+    friends: { type: Schema.Types.ObjectId, ref: 'User' },
 })
 
 export default mongoose.model('Profile', profileSchema)

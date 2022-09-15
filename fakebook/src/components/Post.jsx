@@ -18,6 +18,8 @@ import { InputTextarea } from 'primereact/inputtextarea'
 import { FileUpload } from 'primereact/fileupload'
 import { Dialog } from 'primereact/dialog'
 import { updatePost, deletePost, likePost } from '../actions/posts'
+import { getUser } from '../actions/users'
+import { getProfile } from '../actions/profiles'
 
 function Post ({ post }) {
     const dispatch = useDispatch()
@@ -29,7 +31,6 @@ function Post ({ post }) {
         given_name: '',
         family_name: '',
         name: '',
-        selectedFile: ([]),
     })
 
     const [currentId, setCurrentId] = useState()
@@ -41,6 +42,8 @@ function Post ({ post }) {
     const [postAvatarLabel, setPostAvatarLabel] = useState()
 
     const [loggedUser, setLoggedUser] = useState(JSON.parse(localStorage.getItem('profile')))
+
+    const [imgData, setImgData] = useState()
 
     const menu = useRef()
     const updateDeleteToast = useRef()
@@ -91,9 +94,12 @@ function Post ({ post }) {
             regRef.current.style.opacity = 0;
             regRef.current.style.pointerEvents = 'none';
             regRefImg.current.style.display = 'none'
-            dispatch(updatePost(currentId, postData))
+            const updatedPost = new FormData()
+            updatedPost.set('data', JSON.stringify(postData))
+            updatedPost.append('post-photo', imgData)
+            dispatch(updatePost(currentId, updatedPost))
             regRefText.current.value = ''
-            setPostData({ body: '', given_name: '', family_name: '', name: '', selectedFile: ([])})
+            setPostData({ body: '', given_name: '', family_name: '', name: ''})
             fileUploadRef.current.clear()
             updateDeleteToast.current.show({severity: 'success', summary: 'Updated', detail: 'Post Updated!', life: 3000})
         } else {
@@ -114,37 +120,21 @@ function Post ({ post }) {
         regRefImg.current.style.display = 'none'
         regRefText.current.value = ''
         fileUploadRef.current.clear()
-        setPostData({ body: '', given_name: '', family_name: '', name: '', selectedFile: ([])})
+        setPostData({ body: '', given_name: '', family_name: '', name: ''})
     }
 
     const uploadPhoto = () => {
         regRefImg.current.style.display = 'block'
     }
 
-    const uploadImg =  (e) => {
-        let images = []
-        const reader = new FileReader()
-        e.files.forEach(async file => {
-            let blob = await fetch(file.objectURL).then(r => r.blob())
-            reader.readAsDataURL(blob)
-            reader.onloadend = function () {
-                const base64data = reader.result
-                images.push(base64data)
-            }
-        })
-
-        setPostData({ ...postData, selectedFile: images})
-        console.log(postData)
+    const uploadImg =  ({files}) => {
+        setImgData(files[0])
     }
-
     
-
     const onTemplateRemove = (callback) => {
-        setPostData({ ...postData, selectedFile: ([])})
+        setImgData()
         callback();
     }
-
-
 
     const headerTemplate = (options) => {
         const { className, chooseButton, cancelButton } = options;
@@ -192,7 +182,7 @@ function Post ({ post }) {
             }         
         })
     }, [])
-
+console.log(post)
     return (
         <div>
             <Toast ref={regRefEmptyPost} />
@@ -205,8 +195,8 @@ function Post ({ post }) {
                                 <Avatar image={postAvatar} label={postAvatarLabel} shape='circle' size='xlarge' />
                             </div>
                             <div>
-                                <span className='profile-name'>{post.name}</span>
-                                <h4 className='time'>{moment(post.createdAt).format('MMMM D [at] h:mm A')}</h4>
+                                <span className='profile-name'>{post?.name}</span>
+                                <h4 className='time'>{moment(post?.createdAt).format('MMMM D [at] h:mm A')}</h4>
                             </div>
                             <div className='post-options-button-wrapper'>
                                 <Toast ref={updateDeleteToast} />
@@ -216,10 +206,10 @@ function Post ({ post }) {
                                 )}
                             </div>
                         </div>
-                        <h2 className='post-body'>{post.body}</h2>
-                        <img alt='post' className='post-image' src={post.selectedFile} />
+                        <h2 className='post-body'>{post?.body}</h2>
+                        <img alt='post' className='post-image' src={post.selectedFile ? `http://localhost:5000/${post.selectedFile}` : ''} />
                         <div className='like-comment-container'>
-                            <i className='pi pi-thumbs-up like-icon'><span id={post.likes.length} className='like-count'>{post.likes.length}</span></i>
+                            <i className='pi pi-thumbs-up like-icon'><span id={post?.likes.length} className='like-count'>{post?.likes.length}</span></i>
                             <h3>Comments</h3>
                         </div>
                         <div>
@@ -270,7 +260,7 @@ function Post ({ post }) {
                                 <Avatar image={picture} label={avatar_placeholder} shape='circle' size='xlarge' />
                             </div>
                             <div>
-                                <span className='profile-name'>{post.name}</span>
+                                <span className='profile-name'>{post?.name}</span>
                             </div>
                         </div>
                         <div>

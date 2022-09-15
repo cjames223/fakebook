@@ -1,4 +1,3 @@
-import mongoose from 'mongoose'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 
@@ -8,17 +7,6 @@ import Profile from '../models/profile.js'
 export const getUsers = async (req, res) => {
     try {
         const Users = await User.find()
-
-        res.status(200).json(Users)
-    } catch (error) {
-        res.status(404).json({ message: error.message })
-    }
-}
-
-export const getUser = async (req, res) => {
-    const { id } = req.params
-    try {
-        const Users = await User.findById(id)
 
         res.status(200).json(Users)
     } catch (error) {
@@ -48,19 +36,19 @@ export const signin = async (req, res) => {
 
 export const signup = async (req, res) => {
     const { email, password, confirm_password, given_name, family_name, date } = req.body
-
+console.log(req.body)
     try {
         const existingUser = await User.findOne({ email })
-
+console.log(existingUser)
         if(existingUser) return res.status(400).json({ message: "User already exists."})
 
         if(password !== confirm_password) return res.status(400).json({ message: "Passwords don't match."})
 
         const hashedPassword = await bcrypt.hash(password, 12)
-
+console.log(hashedPassword)
         const result = await User.create({ email, password: hashedPassword, given_name: given_name, family_name: family_name, name: `${given_name} ${family_name}` })
-
-        await Profile.create({ userId: result._id, email, password: hashedPassword, given_name: given_name, family_name: family_name, name: `${given_name} ${family_name}`, birthday: date })
+console.log(result)
+        await Profile.create({ _id: result._id, email, given_name: given_name, family_name: family_name, name: `${given_name} ${family_name}`, birthday: date })
 
         const token = jwt.sign({ email: result.email, id: result._id }, 'test', { expiresIn: '365 days' })
 

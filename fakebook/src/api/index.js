@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const API = axios.create({ baseURL: 'http://localhost:5000' })
-
+console.log(API)
 API.interceptors.request.use((req) => {
     if(localStorage.getItem('profile')) {
         req.headers.Authorization = `Bearer ${JSON.parse(localStorage.getItem('profile')).token}`
@@ -11,7 +11,7 @@ API.interceptors.request.use((req) => {
 })
 
 export const fetchPosts = () => API.get('/posts')
-export const createPost = (newPost) => API.post('/posts', newPost)
+export const createPost = (newPost, img) => API.post('/posts', newPost)
 export const likePost = (id) => API.patch(`/posts/${id}/likePost`)
 export const updatePost = (id, updatedPost) => API.patch(`/posts/${id}`, updatedPost)
 export const deletePost = (id) => API.delete(`/posts/${id}`)
@@ -20,8 +20,8 @@ export const signIn = (FormData) => API.post('/user/signin', FormData)
 export const signUp = (FormData) => API.post('/user/signup', FormData)
 
 export const fetchUsers = () => API.get('/user')
-export const fetchUser = (id) => API.get(`/user/${id}`)
 
 export const fetchProfiles = () => API.get('/profile')
-export const fetchProfile = (id) => API.post(`/profile/${id}`)
-export const uploadPhoto = (id, uploadedPhoto) => API.patch(`/profile/${id}`, uploadedPhoto)
+
+export const uploadPhoto = (uploadedPhoto) => API.post('/image', uploadedPhoto)
+export const fetchPhotos = () => API.get('/image')

@@ -18,16 +18,36 @@ import { Toast } from 'primereact/toast'
 import { Image } from 'primereact/image'
 import { TabMenu } from 'primereact/tabmenu'
 import { Galleria } from 'primereact/galleria'
+import { useEffect } from 'react';
 
 const Header = () => {
+    const [loggedUser, setLoggedUser] = useState(JSON.parse(localStorage.getItem('profile')))
+    // const [profile, setProfile] = useState()
+
+    const currentLocation = window.location.pathname.split('/')
+    const currentProfile = currentLocation[2]
+
     let allPostContainer = useSelector((state) => state.ref_all_post_container)
     let createPostContainer = useSelector((state) => state.ref_create_post_container)
     let photoContainerCard = useSelector((state) => state.ref_photo_container_card)
+    let profiles = useSelector((state) => state.profiles)
 
-    const [loggedUser, setLoggedUser] = useState(JSON.parse(localStorage.getItem('profile')))    
+    let userProfile
 
-    const picture = loggedUser?.result.picture
-    const avatar_placeholder = `${loggedUser?.result.given_name.charAt(0).toUpperCase()}${loggedUser?.result.family_name.charAt(0).toUpperCase()}`
+    profiles.map((profile) => {
+        if(profile._id === currentProfile) {
+            userProfile = profile
+        }
+    })
+
+    console.log(currentLocation)
+    
+   console.log(profiles)
+
+    const userName = userProfile?.name ?? ''
+    const profileImage = userProfile?.profileImage
+    const coverImage = userProfile?.coverImage
+    const avatar_placeholder = `${userProfile?.given_name.charAt(0).toUpperCase() ?? ''}${userProfile?.family_name.charAt(0).toUpperCase() ?? ''}`
 
     const items = [
         {label: 'Posts', icon: 'pi pi-fw pi-book', command: () => {
@@ -52,14 +72,14 @@ const Header = () => {
       <div className='header-container'>
         <Card className='header-card'>
             <div>
-                <Image imageClassName='cover-image' src={img} alt='Cover Image' width="1200" downloadable />
+                <Image imageClassName='cover-image' src={coverImage} width="1200" downloadable />
             </div>
             <div className='header-avatar'>
                 <div className='avatar-image-container' value='text'>
-                    <Avatar className='avatar-image' image={img} shape='circle' label={avatar_placeholder}/>
+                    <Avatar className='avatar-image' image={profileImage} shape='circle' label={avatar_placeholder}/>
                 </div>
                 <div>
-                    <span className='header-profile-name profile-name'>Carlton James Jr.</span>
+                    <span className='header-profile-name profile-name'>{userName}</span>
                 </div>
             </div>
             <hr />

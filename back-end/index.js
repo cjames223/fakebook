@@ -6,6 +6,7 @@ import dotenv from 'dotenv'
 import postRoutes from './routes/posts.js'
 import userRoutes from './routes/users.js'
 import profileRoutes from './routes/profiles.js'
+import imageRoutes from './routes/images.js'
 
 const app = express()
 dotenv.config()
@@ -18,6 +19,9 @@ app.use(cors())
 app.use('/posts', postRoutes)
 app.use('/user', userRoutes)
 app.use('/profile', profileRoutes)
+app.use('/image', imageRoutes)
+app.use('/uploads', express.static('uploads'))
+
 
 const PORT = process.env.PORT || 5000
 

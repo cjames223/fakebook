@@ -98,6 +98,7 @@ body {
 .navbar-container {
   width: 100vw;
   position: sticky;
+  z-index: 2;
   top: 0;
 }
 
@@ -473,6 +474,15 @@ img[src=''] {
   align-items: center;
   justify-content: space-between;
 
+}
+
+/* FOR GALLERY IMAGE */
+
+.img-options-button {
+  position: absolute !important;
+  z-index: 1 !important;
+  color: white !important;
+  background-color: rgba(15, 10, 8, 0.7) !important;
 }
 
 /* MEDIA QUERIES */

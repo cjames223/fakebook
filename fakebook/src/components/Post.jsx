@@ -182,7 +182,7 @@ function Post ({ post }) {
             }         
         })
     }, [])
-console.log(post)
+
     return (
         <div>
             <Toast ref={regRefEmptyPost} />

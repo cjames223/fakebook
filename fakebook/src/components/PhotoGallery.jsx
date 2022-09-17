@@ -19,12 +19,13 @@ import { Image } from 'primereact/image'
 import { TabMenu } from 'primereact/tabmenu'
 import { Galleria } from 'primereact/galleria'
 import { getPhotoContainerCard } from '../actions/photo_container_card'
+import { getPhotos } from '../actions/images';
 import { uploadPhoto } from '../actions/images'
-import { applyMiddleware } from 'redux';
+import { Menu } from 'primereact/menu'
 
-const PhotoGallery = () => {
+const PhotoGallery = ({images}) => {
     const dispatch = useDispatch()
-
+console.log('refresh')
     const [refresh, setRefresh] = useState({
         refresh: false
     })
@@ -34,11 +35,10 @@ const PhotoGallery = () => {
 
     let user = JSON.parse(localStorage.getItem('profile'))
 
-    let images = useSelector((state) => state.images)
-
     const photoUploadToast = useRef()
     const photoContainerCard = useRef()
     const fileUploadRef = useRef()
+    const menu = useRef()
     
     const userId = user.result._id
 
@@ -58,14 +58,16 @@ const PhotoGallery = () => {
         }, 5000);
     }
 
-    console.log(photoUploadToast)
+    let items = [
+        {label: 'Make Profile Photo', icon: 'pi pi-fw pi-id-card'},
+        {label: 'Make Cover Photo', icon: 'pi pi-fw pi-image'},
+        {label: 'Delete', icon: 'pi pi-fw pi-trash'}
+    ]
 
     useEffect(() => {
         dispatch(getPhotoContainerCard(photoContainerCard))
         setRefresh({ refresh: false })
     }, [])
-
-    let date = Date.now()
 
     return (
         <div>
@@ -76,15 +78,18 @@ const PhotoGallery = () => {
                         <h1>Photos</h1>
                     </div>
                     <div>
-                        <FileUpload ref={fileUploadRef} mode="basic" url='/image' name="photo" accept="image/*" auto maxFileSize={10000000} onBeforeSend={getUserId} onProgress={uploadImg} onUpload={galleryRefresh} />
+                        <FileUpload ref={fileUploadRef} chooseLabel='Upload Photo' mode="basic" url='/image' name="photo" accept="image/*" auto maxFileSize={10000000} onBeforeSend={getUserId} onProgress={uploadImg} onUpload={galleryRefresh} />
                     </div>
                 </div>
                 <div className='photo-container' >
                     {images.map((image) => {
                         if (image.uploadedBy === currentProfile) {
                             return (
-                                <div>
-                                    <Image imageClassName='photos' src={`http://localhost:5000/${image.path}`} onClick={() => console.log('it works')} style={{cursor: 'pointer'}} downloadable />
+                                <div style={{postion: 'relative'}}>
+                                    <Menu model={items} popup ref={menu} />
+                                    <Button icon="pi pi-pencil" className="p-button-secondary p-button-lg p-button-rounded p-button-text img-options-button" onClick={(event) => menu.current.toggle(event)} />
+                                    {/* <Button style={{position: 'absolute', zIndex: '1'}} /> */}
+                                    <Image key={image.uploadedAt} imageClassName='photos' src={`http://localhost:5000/${image.path}`} onClick={() => image.mozRequestFullscreen()} style={{cursor: 'pointer'}} downloadable preview />
                                 </div>  
                             )
                         }

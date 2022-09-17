@@ -27,7 +27,7 @@ function App() {
     dispatch(getUsers())
     dispatch(getProfiles())
     dispatch(getPhotos())
-  }, [dispatch])
+  })
 
   useEffect(() => {
     let user = JSON.parse(localStorage.getItem('profile'))

@@ -72,7 +72,7 @@ const Header = () => {
       <div className='header-container'>
         <Card className='header-card'>
             <div>
-                <Image imageClassName='cover-image' src={coverImage} width="1200" downloadable />
+                <Image imageClassName='cover-image' src={coverImage} width="1200" downloadable preview/>
             </div>
             <div className='header-avatar'>
                 <div className='avatar-image-container' value='text'>
